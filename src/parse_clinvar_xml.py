@@ -34,14 +34,14 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
 
     #measureset -> rcv (one to many) 
     header = [
-        'chrom', 'pos', 'ref', 'alt', 'measureset_type','measureset_id','rcv',
+        'chrom', 'pos', 'ref', 'alt', 'dbsnp', 'measureset_type','measureset_id','rcv',
         'allele_id','symbol',
         'hgvs_c','hgvs_p','molecular_consequence',
         'clinical_significance','clinical_significance_ordered','review_status','review_status_ordered','all_submitters','all_traits',
         'all_pmids','inheritance_modes', 'age_of_onset', 'prevalence', 
         'disease_mechanism', 'origin','xrefs'
     ]
-    dest.write(('\t'.join(header) + '\n').encode('utf-8'))
+    dest.write(('\t'.join(header) + '\n').cdencode('utf-8'))
     if multi is not None:
         multi.write(('\t'.join(header) + '\n').encode('utf-8'))
 
@@ -162,7 +162,11 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
                 xref_db = xref_node.attrib.get('DB')
                 xref_id = xref_node.attrib.get('ID')
                 current_row['xrefs'].add("%s:%s" % (xref_db, xref_id))
-        
+                #if it
+                xref_type = attribute_node.attrib.get('Type')
+                if xref_type = 'dbsnp':
+                    current_row['dbsnp'] = attribute_node.attrib.get('ID')
+
         current_row['origin']=set()
         for origin in elem.findall('.//ReferenceClinVarAssertion/ObservedIn/Sample/Origin'):
             current_row['origin'].add(origin.text)
