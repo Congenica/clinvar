@@ -164,7 +164,7 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
                 current_row['xrefs'].add("%s:%s" % (xref_db, xref_id))
                 #if it
                 xref_type = attribute_node.attrib.get('Type')
-                if xref_type in {'dbsnp'}:
+                if xref_type in {'rsNumber'}:
                     current_row['dbsnp'] = attribute_node.attrib.get('ID')
 
         current_row['origin']=set()
