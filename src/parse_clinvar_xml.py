@@ -157,7 +157,7 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
                     if column_value:
                         current_row[column_name].add(column_value)
                         
-        #put all the cross references one column, it may contains NCBI gene ID, conditions ID in disease databases. 
+        #put all the cross references one column, it may contains NCBI gene ID, conditions ID in disease databases.
             for xref_node in traitset.findall('.//XRef'):
                 xref_db = xref_node.attrib.get('DB')
                 xref_id = xref_node.attrib.get('ID')
@@ -166,11 +166,11 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
                 xref_type = attribute_node.attrib.get('Type')
 
             current_row['dbsnp'] = "BLANK"
-            for xref_node in measureset.findall('.//Xref'):
+            for xref_node in measureset.findall('.//Measure/XRef'):
                 xref_type = xref_node.attrib.get('Type')
                 if xref_type in {'rs'}:
-                    print "### %s" % attribute_node.attrib.get('ID')
-                    current_row['dbsnp'] = attribute_node.attrib.get('ID')
+                    print "### %s" % xref_node.attrib.get('ID')
+                    current_row['dbsnp'] = xref_node.attrib.get('ID')
 
         current_row['origin']=set()
         for origin in elem.findall('.//ReferenceClinVarAssertion/ObservedIn/Sample/Origin'):
