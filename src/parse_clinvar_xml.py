@@ -41,7 +41,7 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
         'all_pmids','inheritance_modes', 'age_of_onset', 'prevalence', 
         'disease_mechanism', 'origin','xrefs'
     ]
-    dest.write(('\t'.join(header) + '\n').cdencode('utf-8'))
+    dest.write(('\t'.join(header) + '\n').encode('utf-8'))
     if multi is not None:
         multi.write(('\t'.join(header) + '\n').encode('utf-8'))
 
@@ -164,7 +164,11 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
                 current_row['xrefs'].add("%s:%s" % (xref_db, xref_id))
                 #if it
                 xref_type = attribute_node.attrib.get('Type')
-                if xref_type in {'rsNumber'}:
+
+            current_row['dbsnp'] = "BLANK"
+            for xref_node in measureset.findall('.//Xref'):
+                if xref_type in {'rs'}:
+                    print "### %s" % attribute_node.attrib.get('ID')
                     current_row['dbsnp'] = attribute_node.attrib.get('ID')
 
         current_row['origin']=set()
