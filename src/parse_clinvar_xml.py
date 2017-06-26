@@ -167,6 +167,7 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
 
             current_row['dbsnp'] = "BLANK"
             for xref_node in measureset.findall('.//Xref'):
+                xref_type = xref_node.attrib.get('Type')
                 if xref_type in {'rs'}:
                     print "### %s" % attribute_node.attrib.get('ID')
                     current_row['dbsnp'] = attribute_node.attrib.get('ID')
