@@ -162,9 +162,8 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
                 xref_db = xref_node.attrib.get('DB')
                 xref_id = xref_node.attrib.get('ID')
                 current_row['xrefs'].add("%s:%s" % (xref_db, xref_id))
-                #if it
-                xref_type = attribute_node.attrib.get('Type')
 
+        #JB-CG: Add parser for DBSNP node so we can get rsIDs
             current_row['dbsnp'] = "BLANK"
             for xref_node in measureset.findall('.//Measure/XRef'):
                 xref_type = xref_node.attrib.get('Type')
@@ -182,7 +181,7 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
 
         for i in range(len(measure)):
             #find the allele ID (//Measure/@ID)
-            current_row['allele_id']=measure[i].attrib.get('ID')
+  
             # find the GRCh37 or GRCh38 VCF representation
             genomic_location = None
             for sequence_location in measure[i].findall(".//SequenceLocation"):
