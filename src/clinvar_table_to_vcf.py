@@ -28,6 +28,7 @@ def table_to_vcf(input_table_path):
     print("""
 ##fileformat=VCFv4.1
 ##source=clinvar
+##INFO=<ID=MEASURESET_TYPE,Number=1,Type=String,Description="RSID">
 ##INFO=<ID=MEASURESET_TYPE,Number=1,Type=String,Description="MEASURESET_TYPE">
 ##INFO=<ID=MEASURESET_ID,Number=1,Type=String,Description="MEASURESET_ID">
 ##INFO=<ID=RCV,Number=1,Type=String,Description="RCV">
