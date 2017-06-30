@@ -40,8 +40,8 @@ for i, line in enumerate(f):
         assert len(map(int, record['measureset_id'].split(';'))) > 0, 'Unexpected "measureset_id" column value: ' + record['measureset_id']
         assert len(map(lambda rcv: int(rcv.strip('RCV')), record['rcv'].split(';'))) > 0, 'Unexpected "rcv" column value: ' + record['rcv']
         assert int(record['allele_id']) > 0, 'Unexpected "rcv" column value: ' + record['allele_id']
-        assert len(record['hgvs_c']) == 0 or "c." in record['hgvs_c'], 'Unexpected "hgvs_c" column value: ' + record['hgvs_c']
-        assert len(record['hgvs_p']) == 0 or "p." in record['hgvs_p'], 'Unexpected "hgvs_p" column value: ' + record['hgvs_p']
+        assert len(record['hgvs_c']) == 0 or "c." in record['hgvs_c'] or record['hgvs_p'] == "NA", 'Unexpected "hgvs_c" column value: ' + record['hgvs_c']
+        assert len(record['hgvs_p']) == 0 or "p." in record['hgvs_p'] or record['hgvs_p'] == "NA",  'Unexpected "hgvs_p" column value: ' + record['hgvs_p']
         #assert record['molecular_consequence'], 'Unexpected "molecular_consequence" column value: ' + record['molecular_consequence']
 
 
