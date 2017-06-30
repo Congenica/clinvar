@@ -181,6 +181,7 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
 
         for i in range(len(measure)):
             #find the allele ID (//Measure/@ID)
+            current_row['allele_id'] = measure[i].attrib.get('ID')
 
             # find the GRCh37 or GRCh38 VCF representation
             genomic_location = None
