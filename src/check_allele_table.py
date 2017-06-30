@@ -58,7 +58,7 @@ for i, line in enumerate(f):
         pprint(record)
         errors_counter += 1
 
-assert ("multi" in alleles_table_path and counter > 500) or ("single" in alleles_table_path and counter > 10000), 'Table %s has only %s records' % (alleles_table_path, counter)
+#assert ("multi" in alleles_table_path and counter > 500) or ("single" in alleles_table_path and counter > 10000), 'Table %s has only %s records' % (alleles_table_path, counter)
     
     
 
