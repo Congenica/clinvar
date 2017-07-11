@@ -28,6 +28,7 @@ def table_to_vcf(input_table_path):
     print("""
 ##fileformat=VCFv4.1
 ##source=clinvar
+##INFO=<ID=DBSNP,Number=1,Type=String,Description="RSID">
 ##INFO=<ID=MEASURESET_TYPE,Number=1,Type=String,Description="MEASURESET_TYPE">
 ##INFO=<ID=MEASURESET_ID,Number=1,Type=String,Description="MEASURESET_ID">
 ##INFO=<ID=RCV,Number=1,Type=String,Description="RCV">
@@ -84,7 +85,7 @@ def table_to_vcf(input_table_path):
         vcf_row = []
         vcf_row.append(table_row["chrom"])
         vcf_row.append(table_row["pos"])
-        vcf_row.append('.')  # ID
+        vcf_row.append(table_row["hgvs_c"])  # ID
         vcf_row.append(table_row["ref"])
         vcf_row.append(table_row["alt"])
         vcf_row.append('.')  # QUAL
@@ -96,7 +97,7 @@ def table_to_vcf(input_table_path):
         #    INFO - additional information: (String, no white-space, semi-colons, or equals-signs permitted; commas are
         #    permitted only as delimiters for lists of values) INFO fields are encoded as a semicolon-separated series of short
         #    keys with optional values in the format: <key>=<data>[,data].
-        for key in ['measureset_type','measureset_id','rcv','allele_id',
+        for key in ['dbsnp','measureset_type','measureset_id','rcv','allele_id',
         'symbol', 'hgvs_c','hgvs_p','molecular_consequence','clinical_significance', 
         'pathogenic', 'benign', 'conflicted', 'review_status', 'gold_stars','all_submitters',
         'all_traits','all_pmids', 'inheritance_modes', 'age_of_onset','prevalence', 'disease_mechanism', 

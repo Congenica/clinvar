@@ -34,7 +34,7 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
 
     #measureset -> rcv (one to many) 
     header = [
-        'chrom', 'pos', 'ref', 'alt', 'measureset_type','measureset_id','rcv',
+        'chrom', 'pos', 'ref', 'alt', 'dbsnp', 'measureset_type','measureset_id','rcv',
         'allele_id','symbol',
         'hgvs_c','hgvs_p','molecular_consequence',
         'clinical_significance','clinical_significance_ordered','review_status','review_status_ordered','all_submitters','all_traits',
@@ -157,12 +157,20 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
                     if column_value:
                         current_row[column_name].add(column_value)
                         
-        #put all the cross references one column, it may contains NCBI gene ID, conditions ID in disease databases. 
+        #put all the cross references one column, it may contains NCBI gene ID, conditions ID in disease databases.
             for xref_node in traitset.findall('.//XRef'):
                 xref_db = xref_node.attrib.get('DB')
                 xref_id = xref_node.attrib.get('ID')
                 current_row['xrefs'].add("%s:%s" % (xref_db, xref_id))
-        
+
+        #JB-CG: Add parser for DBSNP node so we can get rsIDs
+            current_row['dbsnp'] = "BLANK"
+            for xref_node in measureset.findall('.//Measure/XRef'):
+                xref_type = xref_node.attrib.get('Type')
+                if xref_type in {'rs'}:
+                    print "### %s" % xref_node.attrib.get('ID')
+                    current_row['dbsnp'] = xref_node.attrib.get('ID')
+
         current_row['origin']=set()
         for origin in elem.findall('.//ReferenceClinVarAssertion/ObservedIn/Sample/Origin'):
             current_row['origin'].add(origin.text)
@@ -173,7 +181,8 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
 
         for i in range(len(measure)):
             #find the allele ID (//Measure/@ID)
-            current_row['allele_id']=measure[i].attrib.get('ID')
+            current_row['allele_id'] = measure[i].attrib.get('ID')
+
             # find the GRCh37 or GRCh38 VCF representation
             genomic_location = None
             for sequence_location in measure[i].findall(".//SequenceLocation"):
