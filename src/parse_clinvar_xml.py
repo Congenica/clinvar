@@ -37,13 +37,36 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
         'chrom', 'pos', 'ref', 'alt', 'dbsnp', 'measureset_type','measureset_id','rcv',
         'allele_id','symbol',
         'hgvs_c','hgvs_p','molecular_consequence',
-        'clinical_significance','clinical_significance_ordered','review_status','review_status_ordered','all_submitters','all_traits',
+        'clinical_significance','clinical_significance_ordered','sapientia_clinsig','review_status','review_status_ordered','all_submitters','all_traits',
         'all_pmids','inheritance_modes', 'age_of_onset', 'prevalence', 
         'disease_mechanism', 'origin','xrefs'
     ]
     dest.write(('\t'.join(header) + '\n').encode('utf-8'))
     if multi is not None:
         multi.write(('\t'.join(header) + '\n').encode('utf-8'))
+
+    pathogenicity_map = {
+        'Affects': 'Unlikely to be pathogenic',
+        'Pathogenic': 'Clearly pathogenic',
+        'pathogenic': 'Clearly pathogenic',
+        'Likely pathogenic': 'Likely to be pathogenic',
+        'likely pathogenic': 'Likely to be pathogenic',
+        'Uncertain significance': 'Unknown significance (VUS)',
+        'uncertain significance': 'Unknown significance (VUS)',
+        'Likely benign': 'Unlikely to be pathogenic',
+        'likely benign': 'Unlikely to be pathogenic',
+        'Benign': 'Clearly not pathogenic',
+        'benign': 'Clearly not pathogenic',
+        'association not found': 'Unknown significance (VUS)',
+        'drug response': 'Unknown significance (VUS)',
+        'confers sensitivity': 'Unknown significance (VUS)',
+        'risk factor': 'Likely to be pathogenic',
+        'other': 'Unknown significance (VUS)',
+        'association': 'Unknown significance(VUS)',
+        'protective': 'Clearly not pathogenic',
+        'not provided': 'Excluded',
+        'conflicting data from submitters': 'Unknown significance (VUS)'
+    }
 
     scounter = 0
     mcounter = 0
@@ -119,12 +142,19 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
         #find the clincial significance and review status reported in RCV(aggregated from SCV)
         current_row['clinical_significance']=[]
         current_row['review_status']=[]
-        
+        current_row['sapientia_clinsig'] = []
+
+
         clinical_significance=elem.find('.//ReferenceClinVarAssertion/ClinicalSignificance') 
         if clinical_significance.find('.//ReviewStatus') is not None:
             current_row['review_status']=clinical_significance.find('.//ReviewStatus').text;
         if clinical_significance.find('.//Description') is not None:
             current_row['clinical_significance']=clinical_significance.find('.//Description').text
+        #use a dictionary to replace whatever they have in the XML with a value that is acceptable to our db
+        #XML CLinsig categories are at ftp://ftp.ncbi.nlm.nih.gov/pub/GTR/standard_terms/Clinical_significance.txt
+        if clinical_significance.find('.//Description') is not None:
+            current_row['sapientia_clinsig']=pathogenicity_map[current_row['clinical_significance']]
+
 
         #match the order of the submitter list - edit 2/22/17
         current_row['review_status_ordered'] = ';'.join([
