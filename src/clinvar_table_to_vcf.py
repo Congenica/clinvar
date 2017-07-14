@@ -38,6 +38,7 @@ def table_to_vcf(input_table_path):
 ##INFO=<ID=HGVS_P,Number=1,Type=String,Description="HGVS_P">
 ##INFO=<ID=MOLECULAR_CONSEQUENCE,Number=1,Type=String,Description="MOLECULAR_CONSEQUENCE">
 ##INFO=<ID=CLINICAL_SIGNIFICANCE,Number=1,Type=String,Description="CLINICAL_SIGNIFICANCE">
+##INFO=<ID=SAPIENTIA_CLINSIG,Number=1,Type=String,Description="SAPIENTIA_CLINICAL_SIGNIFICANCE">
 ##INFO=<ID=PATHOGENIC,Number=1,Type=String,Description="PATHOGENIC">
 ##INFO=<ID=BENIGN,Number=1,Type=String,Description="BENIGN">
 ##INFO=<ID=CONFLICTED,Number=1,Type=String,Description="CONFLICTED">
@@ -98,7 +99,7 @@ def table_to_vcf(input_table_path):
         #    permitted only as delimiters for lists of values) INFO fields are encoded as a semicolon-separated series of short
         #    keys with optional values in the format: <key>=<data>[,data].
         for key in ['dbsnp','measureset_type','measureset_id','rcv','allele_id',
-        'symbol', 'hgvs_c','hgvs_p','molecular_consequence','clinical_significance', 
+        'symbol', 'hgvs_c','hgvs_p','molecular_consequence','clinical_significance','sapientia_clinsig',
         'pathogenic', 'benign', 'conflicted', 'review_status', 'gold_stars','all_submitters',
         'all_traits','all_pmids', 'inheritance_modes', 'age_of_onset','prevalence', 'disease_mechanism', 
         'origin', 'xrefs']:
