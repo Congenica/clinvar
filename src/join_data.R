@@ -46,15 +46,23 @@ combined = merge(xml_extract, txt_extract,by='allele_id',all.x=FALSE)
 
 convert_pathogenicity <- function(pathogenicity) {
   
-  pathogenicity_map = c( 'Unlikely to be pathogenic','Clearly pathogenic','Clearly pathogenic','Likely to be pathogenic','Likely to be pathogenic','Unknown significance (VUS)','Unknown significance (VUS)','Unlikely to be pathogenic','Unlikely to be pathogenic','Clearly not pathogenic','Clearly not pathogenic','Unknown significance (VUS)','Unknown significance (VUS)','Unknown significance (VUS)','Likely to be pathogenic','Unknown significance (VUS)','Unknown significance(VUS)','Clearly not pathogenic','Excluded','Unknown significance (VUS)')
-  names(pathogenicity_map) = c('Affects','Pathogenic','pathogenic','Likely pathogenic','likely pathogenic','Uncertain significance','uncertain significance','Likely benign','likely benign','Benign','benign','association not found','drug response','confers sensitivity','risk factor','other','association','protective','not provided','conflicting data from submitters')
+  pathogenicity_map = c( 'Unknown significance (VUS)','Likely to be pathogenic','Unlikely to be pathogenic','Unlikely to be pathogenic','Clearly pathogenic','Clearly pathogenic','Likely to be pathogenic','Likely to be pathogenic','Unknown significance (VUS)','Unknown significance (VUS)','Unlikely to be pathogenic','Unlikely to be pathogenic','Clearly not pathogenic','Clearly not pathogenic','Unknown significance (VUS)','Unknown significance (VUS)','Unknown significance (VUS)','Likely to be pathogenic','Unknown significance (VUS)','Unknown significance(VUS)','Clearly not pathogenic','Excluded','Unknown significance (VUS)')
+  names(pathogenicity_map) = c('Conflicting interpretations of pathogenicity','Pathogenic/Likely pathogenic','Benign/Likely benign','Affects','Pathogenic','pathogenic','Likely pathogenic','likely pathogenic','Uncertain significance','uncertain significance','Likely benign','likely benign','Benign','benign','association not found','drug response','confers sensitivity','risk factor','other','association','protective','not provided','conflicting data from submitters')
   
-  first_category<-unlist(strsplit(pathogenicity,","))[1]
+  #Map this across, if we get info not on the list of pathogenicitymappings, we call it unknown.
+  primary_pathogenicity<-unlist(strsplit(pathogenicity,","))[1]
+  if(is.na(pathogenicity_map[primary_pathogenicity])==TRUE) {
+    output_pathogenicity<-'Unknown significance (VUS)'
+  }
+  else{
+    output_pathogenicity<-primary_pathogenicity
+  }
   
-  return(pathogenicity_map[first_category])
+  return(output_pathogenicity)
 }
 
-sapientia_clinsig<-lapply(as.character(combined$clinical_significance),convert_pathogenicity)
+#Replace the Sapientia-approved clinical significance values with the new mapped ones.
+sapientia_clinsig<-data.frame(lapply(as.character(combined$clinical_significance),convert_pathogenicity))
 names(sapientia_clinsig)<-c('sapientia_clinsig')
 combined$sapientia_clinsig<-sapientia_clinsig
 
