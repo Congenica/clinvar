@@ -44,6 +44,20 @@ xml_extract = subset(xml_raw,select=-c(clinical_significance,review_status))
 # join on allele id
 combined = merge(xml_extract, txt_extract,by='allele_id',all.x=FALSE)
 
+convert_pathogenicity <- function(pathogenicity) {
+  
+  pathogenicity_map = c( 'Unlikely to be pathogenic','Clearly pathogenic','Clearly pathogenic','Likely to be pathogenic','Likely to be pathogenic','Unknown significance (VUS)','Unknown significance (VUS)','Unlikely to be pathogenic','Unlikely to be pathogenic','Clearly not pathogenic','Clearly not pathogenic','Unknown significance (VUS)','Unknown significance (VUS)','Unknown significance (VUS)','Likely to be pathogenic','Unknown significance (VUS)','Unknown significance(VUS)','Clearly not pathogenic','Excluded','Unknown significance (VUS)')
+  names(pathogenicity_map) = c('Affects','Pathogenic','pathogenic','Likely pathogenic','likely pathogenic','Uncertain significance','uncertain significance','Likely benign','likely benign','Benign','benign','association not found','drug response','confers sensitivity','risk factor','other','association','protective','not provided','conflicting data from submitters')
+  
+  first_category<-unlist(strsplit(pathogenicity,","))[1]
+  
+  return(pathogenicity_map[first_category])
+}
+
+sapientia_clinsig<-lapply(as.character(combined$clinical_significance),convert_pathogenicity)
+names(sapientia_clinsig)<-c('sapientia_clinsig')
+combined$sapientia_clinsig<-sapientia_clinsig
+
 # lookup table based on http://www.ncbi.nlm.nih.gov/clinvar/docs/details/
 gold_stars_table = list(
   'no assertion provided' = 0,
@@ -76,3 +90,4 @@ combined = combined[,c('chrom','pos','ref','alt','dbsnp','measureset_type','meas
 write.table(combined, output_table, sep='\t', row.names=F, col.names=T, quote=F)
 
 close(output_table)
+
