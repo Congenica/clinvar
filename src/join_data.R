@@ -11,38 +11,6 @@ options(error = quote({
 
 args = commandArgs(trailingOnly=TRUE)
 
-variant_summary_table = 'variant_summary.txt.gz'
-if (length(args) != 3) {
-  print(paste("Requires 3 command line args: [variant_summary table] [clinvar_allele_trait_pairs table] [output_table_path]",multi))
-  exit(-1)
-}
-
-variant_summary_table = gzfile(args[1])
-clinvar_allele_trait_pairs_table = gzfile(args[2])
-output_table = gzfile(args[3], 'w')
-
-
-# load what we've extracted from the XML so far
-xml_raw = read.table(clinvar_allele_trait_pairs_table, sep='\t', comment.char='', quote='', header=T, skipNul=T, check.names=F)
-print(dim(xml_raw))
-
-# load the tab-delimited summary
-txt_download = read.table(variant_summary_table, sep='\t', comment.char='', quote='', header=T, skipNul=T, check.names=F)
-print(dim(txt_download))
-
-# subset the tab-delimited summary to desired rows and cols
-colnames(txt_download) = gsub('\\.','_',tolower(colnames(txt_download)))
-colnames(txt_download) = replace(colnames(txt_download), 1, "allele_id")
-
-desired_columns<-c('allele_id','clinicalsignificance','reviewstatus','lastevaluated')
-txt_extract = subset(txt_download, assembly == 'GRCh37', select=desired_columns)
-colnames(txt_extract)<-c('allele_id','clinical_significance','review_status','last_evaluated')
-#drop the clinical_significance and review_status in clinvar_record.tsv 
-#use the summary ones in variant_summary.txt
-xml_extract = subset(xml_raw,select=-c(clinical_significance,review_status))
-
-# join on allele id
-combined = merge(xml_extract, txt_extract,by='allele_id',all.x=FALSE)
 
 convert_pathogenicity <- function(pathogenicity) {
   
@@ -66,7 +34,7 @@ convert_pathogenicity <- function(pathogenicity) {
     'confers sensitivity' = 'Unknown significance (VUS)',
     'risk factor' = 'Likely to be pathogenic',
     'other' = 'Unknown significance (VUS)',
-    'association' = 'Unknown significance(VUS)',
+    'association' = 'Unknown significance (VUS)',
     'protective' = 'Clearly not pathogenic',
     'not provided' = 'Excluded',
     'conflicting data from submitters' = 'Unknown significance (VUS)')
@@ -75,6 +43,7 @@ convert_pathogenicity <- function(pathogenicity) {
   primary_pathogenicity<-unlist(strsplit(pathogenicity,","))[1]
   if(is.na(pathogenicity_map[primary_pathogenicity])==TRUE) {
     output_pathogenicity<-'Unknown significance (VUS)'
+    
   }
   else{
     output_pathogenicity<-pathogenicity_map[primary_pathogenicity]
@@ -83,13 +52,47 @@ convert_pathogenicity <- function(pathogenicity) {
   return(output_pathogenicity)
 }
 
-#Replace the Sapientia-approved clinical significance values with the new mapped ones.
-sapientia_clinsig<-data.frame(lapply(as.character(combined$clinical_significance),convert_pathogenicity),stringsAsFactors = F)
+variant_summary_table = 'variant_summary.txt.gz'
+if (length(args) != 3) {
+  print(paste("Requires 3 command line args: [variant_summary table] [clinvar_allele_trait_pairs table] [output_table_path]",multi))
+  exit(-1)
+}
+
+variant_summary_table = gzfile(args[1])
+clinvar_allele_trait_pairs_table = gzfile(args[2])
+output_table = gzfile(args[3], 'w')
+
+
+# load what we've extracted from the XML so far
+xml_raw = read.table(clinvar_allele_trait_pairs_table, sep='\t', comment.char='', quote='', header=T, skipNul=T, check.names=F, stringsAsFactors=F)
+print(dim(xml_raw))
+
+# load the tab-delimited summary
+txt_download = read.table(variant_summary_table, sep='\t', comment.char='', quote='', header=T, skipNul=T, check.names=F)
+print(dim(txt_download))
+
+# subset the tab-delimited summary to desired rows and cols
+colnames(txt_download) = gsub('\\.','_',tolower(colnames(txt_download)))
+colnames(txt_download) = replace(colnames(txt_download), 1, "allele_id")
+
+desired_columns<-c('allele_id','clinicalsignificance','reviewstatus','lastevaluated')
+txt_extract = subset(txt_download, assembly == 'GRCh37', select=desired_columns)
+colnames(txt_extract)<-c('allele_id','clinical_significance','review_status','last_evaluated')
+#drop the clinical_significance and review_status in clinvar_record.tsv 
+#use the summary ones in variant_summary.txt
+xml_extract = subset(xml_raw,select=-c(clinical_significance,review_status))
+
+# join on allele id
+combined = merge(xml_extract, txt_extract,by='allele_id',all.x=FALSE)
+
+sapientia_clinsig<-sapply(as.character(combined$clinical_significance),convert_pathogenicity)
+sapientia_clinsig<-sapply(sapientia_clinsig,as.character)
 
 #if(exists("sapientia_clinsig", mode="any") == TRUE){
 if(length(sapientia_clinsig)>0){
-  combined$sapientia_clinsig<-sapientia_clinsig
+  combined<-cbind(combined,sapientia_clinsig)
  }
+  
   
 # lookup table based on http://www.ncbi.nlm.nih.gov/clinvar/docs/details/
 gold_stars_table = list(
