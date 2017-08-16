@@ -15,10 +15,10 @@ args = commandArgs(trailingOnly=TRUE)
 convert_pathogenicity <- function(pathogenicity) {
   
   pathogenicity_map = c(
-    'Conflicting interpretations of pathogenicity'= 'Unknown significance (VUS)',
+    'Conflicting interpretations of pathogenicity'= NULL,
     'Pathogenic/Likely pathogenic'= 'Likely to be pathogenic',
     'Benign/Likely benign' = 'Unlikely to be pathogenic',
-    'Affects' = 'Unlikely to be pathogenic',
+    'Affects' = "NULL",
     'Pathogenic' = 'Clearly pathogenic',
     'pathogenic' = 'Clearly pathogenic',
     'Likely pathogenic' = 'Likely to be pathogenic',
@@ -29,21 +29,21 @@ convert_pathogenicity <- function(pathogenicity) {
     'likely benign' ='Unlikely to be pathogenic',
     'Benign' = 'Clearly not pathogenic',
     'benign' ='Clearly not pathogenic',
-    'association not found' = 'Unknown significance (VUS)',
-    'drug response' = 'Unknown significance (VUS)',
-    'confers sensitivity' = 'Unknown significance (VUS)',
-    'risk factor' = 'Likely to be pathogenic',
-    'other' = 'Unknown significance (VUS)',
-    'association' = 'Unknown significance (VUS)',
-    'protective' = 'Clearly not pathogenic',
-    'not provided' = 'Excluded',
-    'conflicting data from submitters' = 'Unknown significance (VUS)')
+    'association not found' = "",
+    'drug response' = "",
+    'confers sensitivity' = "",
+    'risk factor' = "",
+    'other' = "",
+    'association' = "",
+    'protective' = "",
+    'not provided' = "",
+    'conflicting data from submitters' = "")
   
-  #Map this across, if we get info not on the list of pathogenicitymappings, we call it unknown.
+  #Map this across, if we get info not on the list of pathogenicity mappings, we call it unknown.
   primary_pathogenicity<-unlist(strsplit(pathogenicity,","))[1]
   if(is.na(pathogenicity_map[primary_pathogenicity])==TRUE) {
-    output_pathogenicity<-'Unknown significance (VUS)'
-    
+    output_pathogenicity<-""
+    warning("unable to map ",primary_pathogenicity)
   }
   else{
     output_pathogenicity<-pathogenicity_map[primary_pathogenicity]
@@ -91,8 +91,8 @@ sapientia_clinsig<-sapply(sapientia_clinsig,as.character)
 #if(exists("sapientia_clinsig", mode="any") == TRUE){
 if(length(sapientia_clinsig)>0){
   combined<-cbind(combined,sapientia_clinsig)
- }
-  
+  }
+data.frame(sapientia_clinsig)  
   
 # lookup table based on http://www.ncbi.nlm.nih.gov/clinvar/docs/details/
 gold_stars_table = list(
@@ -109,6 +109,7 @@ gold_stars_table = list(
 # add some layers of interpretation on top of this
 # note: we are trying to get the "overall" interpretation that is displayed in the upper right of the clinvar web pages but
 # it is not in any of the available FTP downloads, so this is a stopgap
+combined$review_status<-sapply(combined$review_status,as.character)
 combined$gold_stars = sapply(combined$review_status, function(k) { gold_stars_table[[k]] })
 
 # pathogenic = 1 if at least one submission says path or likely path, 0 otherwise
