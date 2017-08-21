@@ -1,4 +1,5 @@
 #!/usr/bin/env Rscript
+#Script to join together the data fromt heClinVar tsv and from the parsed ClinVar XML
 
 options(stringsAsFactors=F)
 #options(warn=2) 
@@ -11,45 +12,54 @@ options(error = quote({
 
 args = commandArgs(trailingOnly=TRUE)
 
-
-convert_pathogenicity <- function(pathogenicity) {
+convert_pathogenicity<-function(pathogenicity){
+  #convert the list of pathogenicity terms into a single pathogenicity term that will fit in Sapientia.
+  #From the list of terms, take the one with the greatest indication of pathogenicity.
+  pathogenicity_delim=","
+  pathogenicity_list<-unlist(strsplit(pathogenicity,","))
   
-  pathogenicity_map = c(
-    'Conflicting interpretations of pathogenicity'= NULL,
-    'Pathogenic/Likely pathogenic'= 'Likely to be pathogenic',
-    'Benign/Likely benign' = 'Unlikely to be pathogenic',
-    'Affects' = "NULL",
-    'Pathogenic' = 'Clearly pathogenic',
-    'pathogenic' = 'Clearly pathogenic',
-    'Likely pathogenic' = 'Likely to be pathogenic',
-    'likely pathogenic'= 'Likely to be pathogenic',
-    'Uncertain significance' = 'Unknown significance (VUS)',
-    'uncertain significance' ='Unknown significance (VUS)',
-    'Likely benign' ='Unlikely to be pathogenic',
-    'likely benign' ='Unlikely to be pathogenic',
-    'Benign' = 'Clearly not pathogenic',
-    'benign' ='Clearly not pathogenic',
-    'association not found' = "",
-    'drug response' = "",
-    'confers sensitivity' = "",
-    'risk factor' = "",
-    'other' = "",
-    'association' = "",
-    'protective' = "",
-    'not provided' = "",
-    'conflicting data from submitters' = "")
+  pathogenic_terms<-c("Pathogenic/Likely pathogenic", "Pathogenic", 'pathogenic')
+  likely_pathogenic_terms<-c('Likely pathogenic','likely pathogenic')
+  vus_terms<-c('Uncertain significance','uncertain significance')
+  likely_benign_terms<-c('Benign/Likely benign','Likely benign','likely benign')
+  benign_terms<-c('Benign',"benign")
+  unused_terms<-c('association not found','drug response','confers sensitivity','risk factor','other','association',
+                  'protective','not provided','conflicting data from submitters', 'Conflicting interpretations of pathogenicity')
   
-  #Map this across, if we get info not on the list of pathogenicity mappings, we call it unknown.
-  primary_pathogenicity<-unlist(strsplit(pathogenicity,","))[1]
-  if(is.na(pathogenicity_map[primary_pathogenicity])==TRUE) {
-    output_pathogenicity<-""
-    warning("unable to map ",primary_pathogenicity)
-  }
-  else{
-    output_pathogenicity<-pathogenicity_map[primary_pathogenicity]
+  matches<-pathogenicity_list %in% pathogenic_terms 
+  if(TRUE %in% matches){
+    return("Clearly pathogenic")
   }
   
-  return(output_pathogenicity)
+  matches<-pathogenicity_list %in% likely_pathogenic_terms 
+  if(TRUE %in% matches){
+    return("Likely to be pathogenic")
+  }
+  
+  matches<-pathogenicity_list %in% vus_terms 
+  if(TRUE %in% matches){
+    return("Unknown significance (VUS)")
+  }
+  
+  matches<-pathogenicity_list %in% likely_benign_terms 
+  if(TRUE %in% matches){
+    return("Unlikely to be pathogenic")
+  }
+  
+  matches<-pathogenicity_list %in% benign_terms 
+  if(TRUE %in% matches){
+    return("Clearly not pathogenic")
+  }
+  
+  matches<-pathogenicity_list %in% unused_terms 
+  if(TRUE %in% matches){
+    return("")
+  }
+  
+  else {
+    warning("Unable to map \'",pathogenicity_list, "\'. Not a valid set of clinical significance terms")
+    return("")
+  }
 }
 
 variant_summary_table = 'variant_summary.txt.gz'
@@ -58,6 +68,7 @@ if (length(args) != 3) {
   exit(-1)
 }
 
+#Read in the data files
 variant_summary_table = gzfile(args[1])
 clinvar_allele_trait_pairs_table = gzfile(args[2])
 output_table = gzfile(args[3], 'w')
@@ -85,14 +96,15 @@ xml_extract = subset(xml_raw,select=-c(clinical_significance,review_status))
 # join on allele id
 combined = merge(xml_extract, txt_extract,by='allele_id',all.x=FALSE)
 
+#Turn the list of pathogenicity terms into a string for the single most severe term, in a suitable form for Sapientia's
 sapientia_clinsig<-sapply(as.character(combined$clinical_significance),convert_pathogenicity)
 sapientia_clinsig<-sapply(sapientia_clinsig,as.character)
 
-#if(exists("sapientia_clinsig", mode="any") == TRUE){
 if(length(sapientia_clinsig)>0){
   combined<-cbind(combined,sapientia_clinsig)
-  }
-data.frame(sapientia_clinsig)  
+}else{
+  warning("Unable to bind clinsig terms to ClinVar data, no valid clinical significance terms in the TSV")
+}
   
 # lookup table based on http://www.ncbi.nlm.nih.gov/clinvar/docs/details/
 gold_stars_table = list(
@@ -106,8 +118,8 @@ gold_stars_table = list(
   'practice guideline' = 4
 )
 
-# add some layers of interpretation on top of this
-# note: we are trying to get the "overall" interpretation that is displayed in the upper right of the clinvar web pages but
+# Add some layers of interpretation on top of this
+# Note: we are trying to get the "overall" interpretation that is displayed in the upper right of the clinvar web pages but
 # it is not in any of the available FTP downloads, so this is a stopgap
 combined$review_status<-sapply(combined$review_status,as.character)
 combined$gold_stars = sapply(combined$review_status, function(k) { gold_stars_table[[k]] })
