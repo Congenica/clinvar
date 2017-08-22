@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-#Script to join together the data fromt heClinVar tsv and from the parsed ClinVar XML
+#Script to join together the data from the ClinVar tsv and from the parsed ClinVar XML
 
 options(stringsAsFactors=F)
 #options(warn=2) 
@@ -16,7 +16,7 @@ convert_pathogenicity<-function(pathogenicity){
   #convert the list of pathogenicity terms into a single pathogenicity term that will fit in Sapientia.
   #From the list of terms, take the one with the greatest indication of pathogenicity.
   pathogenicity_delim=","
-  pathogenicity_list<-unlist(strsplit(pathogenicity,","))
+  pathogenicity_list<-unlist(strsplit(pathogenicity,"[,;]"))
   
   pathogenic_terms<-c("Pathogenic/Likely pathogenic", "Pathogenic", 'pathogenic')
   likely_pathogenic_terms<-c('Likely pathogenic','likely pathogenic')
@@ -75,7 +75,14 @@ output_table = gzfile(args[3], 'w')
 
 
 # load what we've extracted from the XML so far
-xml_raw = read.table(clinvar_allele_trait_pairs_table, sep='\t', comment.char='', quote='', header=T, skipNul=T, check.names=F, stringsAsFactors=F)
+xml_raw = read.table(clinvar_allele_trait_pairs_table, sep='\t', comment.char='', quote='', header=F, skipNul=T, check.names=F, stringsAsFactors=F)
+names(xml_raw)<-c("chrom", "pos", "ref", "alt", "dbsnp", "measureset_type", "measureset_id", 
+  "rcv", "allele_id", "symbol", "hgvs_c", "hgvs_p", "molecular_consequence", 
+  "clinical_significance", "sapientia_clinsig", "pathogenic", "benign", 
+  "conflicted", "review_status", "last_evaluated", "gold_stars", 
+  "all_submitters", "all_traits", "all_pmids", "inheritance_modes", 
+  "age_of_onset", "prevalence", "disease_mechanism", "origin", 
+  "xrefs")
 print(dim(xml_raw))
 
 # load the tab-delimited summary
