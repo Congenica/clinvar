@@ -75,14 +75,7 @@ output_table = gzfile(args[3], 'w')
 
 
 # load what we've extracted from the XML so far
-xml_raw = read.table(clinvar_allele_trait_pairs_table, sep='\t', comment.char='', quote='', header=F, skipNul=T, check.names=F, stringsAsFactors=F)
-names(xml_raw)<-c("chrom", "pos", "ref", "alt", "dbsnp", "measureset_type", "measureset_id", 
-  "rcv", "allele_id", "symbol", "hgvs_c", "hgvs_p", "molecular_consequence", 
-  "clinical_significance", "sapientia_clinsig", "pathogenic", "benign", 
-  "conflicted", "review_status", "last_evaluated", "gold_stars", 
-  "all_submitters", "all_traits", "all_pmids", "inheritance_modes", 
-  "age_of_onset", "prevalence", "disease_mechanism", "origin", 
-  "xrefs")
+xml_raw = read.table(clinvar_allele_trait_pairs_table, sep='\t', comment.char='', quote='', header=T, skipNul=T, check.names=F, stringsAsFactors=F)
 print(dim(xml_raw))
 
 # load the tab-delimited summary
