@@ -24,6 +24,7 @@ p = configargparse.getArgParser()
 g = p.add_argument_group('main args')
 g.add("--b37-genome", help="b37 .fa genome reference file", required=True)
 g.add("--b38-genome", help="b38 .fa genome reference file. NOTE: chromosome names must be like '1', '2'.. 'X', 'Y', 'MT'.", required=True)
+g.add("--output-path", help="output folder", required=True)
 g.add("-X", "--clinvar-xml", help="The local filename of the ClinVarFullRelase.xml.gz file. If not set, grab the latest from NCBI.")
 g.add("-S", "--clinvar-variant-summary-table", help="The local filename of the variant_summary.txt.gz file. If not set, grab the latest from NCBI.")
 g.add("-E", "--exac-sites-vcf",  help="ExAC sites vcf file. If specified, a clinvar table with extra ExAC fields will also be created.")
@@ -38,6 +39,7 @@ args = p.parse_args()
 for key, value in args.__dict__.items():
     print("%s=%s" % (key, value))
 
+output_path = args.output_path
 reference_genomes = {'b37': args.b37_genome, 'b38': args.b38_genome}
 clinvar_xml = args.clinvar_xml
 #if clinvar_xml and not os.path.isfile(clinvar_xml)
@@ -135,11 +137,11 @@ for genome_build in ('b37', 'b38'):
     for is_multi in (True, False):  # multi = clinvar submission that describes multiple alleles (eg. compound het, haplotypes, etc.)
         single_or_multi = 'multi' if is_multi else 'single'
         if args.single_or_multi and single_or_multi != args.single_or_multi:
-            print("Skippping steps to generate %s table." % single_or_multi)
+            print("Skipping steps to generate %s table." % single_or_multi)
             continue
-            
+
         fsuffix = "%(single_or_multi)s.%(genome_build)s" % locals() # file suffix
-        output_dir = '../output/%(genome_build)s/%(single_or_multi)s' % locals()
+        output_dir = '%(output_path)s/%(genome_build)s/%(single_or_multi)s' % locals()
         os.system('mkdir -p ' + output_dir)
 
         # normalize variants  (use grep -v '^$' to remove empty rows)
@@ -149,7 +151,7 @@ for genome_build in ('b37', 'b38'):
         job.add(("cat " +
             "<(gunzip -c IN:%(tmp_dir)s/clinvar_table_normalized.%(fsuffix)s.tsv.gz | head -1) "  # header row
             "<(gunzip -c IN:%(tmp_dir)s/clinvar_table_normalized.%(fsuffix)s.tsv.gz | tail -n +2 | egrep -v \"^[XYM]\" | sort -k1,1n -k2,2n -k3,3 -k4,4 ) " + # numerically sort chroms 1-22
-            "<(gunzip -c IN:%(tmp_dir)s/clinvar_table_normalized.%(fsuffix)s.tsv.gz | tail -n +2 | egrep \"^[XYM]\" | sort -k1,1 -k2,2n -k3,3 -k4,4 ) " +  #sort chroms X,Y,M 
+            "<(gunzip -c IN:%(tmp_dir)s/clinvar_table_normalized.%(fsuffix)s.tsv.gz | tail -n +2 | egrep \"^[XYM]\" | sort -k1,1 -k2,2n -k3,3 -k4,4 ) " +  #sort chroms X,Y,M
             " | bgzip -c > OUT:%(tmp_dir)s/clinvar_allele_trait_pairs.%(fsuffix)s.tsv.gz") % locals())   # lexicogaraphically sort non-numerical chroms at end
 
         # tabix and copy to output dir
@@ -169,7 +171,7 @@ for genome_build in ('b37', 'b38'):
         job.add(("cat " +
             "<(gunzip -c IN:%(tmp_dir)s/clinvar_alleles_combined.%(fsuffix)s.tsv.gz | head -1) "  # header row
             "<(gunzip -c IN:%(tmp_dir)s/clinvar_alleles_combined.%(fsuffix)s.tsv.gz | tail -n +2 | egrep -v \"^[XYM]\" | sort -k1,1n -k2,2n -k3,3 -k4,4 ) " + # numerically sort chroms 1-22
-            "<(gunzip -c IN:%(tmp_dir)s/clinvar_alleles_combined.%(fsuffix)s.tsv.gz | tail -n +2 | egrep \"^[XYM]\" | sort -k1,1 -k2,2n -k3,3 -k4,4 ) " +  #sort chroms X,Y,M 
+            "<(gunzip -c IN:%(tmp_dir)s/clinvar_alleles_combined.%(fsuffix)s.tsv.gz | tail -n +2 | egrep \"^[XYM]\" | sort -k1,1 -k2,2n -k3,3 -k4,4 ) " +  #sort chroms X,Y,M
             " | bgzip -c > OUT:%(tmp_dir)s/clinvar_alleles.%(fsuffix)s.tsv.gz") % locals())   # lexicogaraphically sort non-numerical chroms at end
 
         # tabix and copy to output dir
