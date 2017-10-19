@@ -7,10 +7,10 @@
 
 source clinvar_pipeline.cfg
 
-wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/variant_summary.txt.gz \
+wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/archive/$variant_summary.txt.gz \
 -P $clinvar_refdir
 
-wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/xml/ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/xml/ClinVarFullRelease_2017-08.xml.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/xml/ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/xml/$xml \
 -P /scratch/data/reference/ClinVar
 
 #Do I want to have this auto-remove or rename old logs?
