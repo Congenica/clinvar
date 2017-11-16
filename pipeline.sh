@@ -22,18 +22,13 @@ bsub -q docker -o $output_dir/Clinvar_XML_Parser_full.out \
 -S $clinvar_refdir/$variant_summary \
 --output-path $output_dir'
 
-#Combine the multi and single-allele files into one big honking VCF
-bcftools concat -a -d all $output_dir/b37/multi/clinvar_alleles.multi.b37.vcf.gz \
+#Combine the multi and single-allele files into one big honking VCF.
+#Use -d none to remove the duplicate lines, since some alleles will apear in both lists.
+#DO NOT use -d all on this data, it will drop any subsequent alleles that share the same coordinates.
+bcftools concat -a -d none $output_dir/b37/multi/clinvar_alleles.multi.b37.vcf.gz \
 $output_dir/b37/single/clinvar_alleles.single.b37.vcf.gz \
 -o $output_dir/clinvar_alleles.combined.b37.vcf.gz
 
-#Remove the duplicate lines, since some alleles will apear in both lists:
-cd $output_dir/clinvar_alleles.combined.b37.vcf.gz
-grep "^#" clinvar_parsed_combined.b37.vcf > clinvar_parsed_combined.b37.unique.vcf && cat clinvar_parsed_combined.b37.vcf \
-| egrep -v '^#' \
-| sort \
-| uniq \
->> clinvar_parsed_combined.b37.unique.vcf
 
 bsub -P congenica -o $output_dir/ClinVar_Load_Log.out \
 -e $output_dir/ClinVar_Load_Log.err \
