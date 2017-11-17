@@ -29,13 +29,13 @@ bcftools concat -a -d none $output_dir/b37/multi/clinvar_alleles.multi.b37.vcf.g
 $output_dir/b37/single/clinvar_alleles.single.b37.vcf.gz \
 -o $output_dir/clinvar_alleles.combined.b37.vcf
 
-java -Xmx8g -Xms2g -jar /usr/local/software/picard/picard.jar SortVcf INPUT=clinvar_alleles.combined.b37.unique.vcf OUTPUT=clinvar_alleles.combined.b37.unique.sorted.vcf
+java -Xmx8g -Xms2g -jar /usr/local/software/picard/picard.jar SortVcf INPUT=clinvar_alleles.combined.b37.vcf OUTPUT=clinvar_alleles.combined.b37.sorted.vcf
 
-bgzip clinvar_alleles.combined.b37.unique.sorted.vcf.gz
-tabix clinvar_alleles.combined.b37.unique.sorted.vcf.gz
+bgzip clinvar_alleles.combined.b37.sorted.vcf.gz
+tabix clinvar_alleles.combined.b37.sorted.vcf.gz
 
 bsub -P congenica -o $output_dir/ClinVar_Load_Log.out \
 -e $output_dir/ClinVar_Load_Log.err \
 python ~/sapientia-web/pipeline/ruffus/load_curated_snv_list.py --verbose 3 --jobs 4 \
 --curated-variant-list $list_name --curated-variant-list-user $sapientia_user \
---no-qc --no-format-vcf --pathogenicity_field SAPIENTIA_CLINSIG --sample-vcf $output_dir/clinvar_alleles.combined.b37.unique.sorted.vcf.gz
+--no-qc --no-format-vcf --pathogenicity_field SAPIENTIA_CLINSIG --sample-vcf $output_dir/clinvar_alleles.combined.b37.sorted.vcf.gz
