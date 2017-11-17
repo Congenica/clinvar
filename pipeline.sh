@@ -27,9 +27,12 @@ bsub -q docker -o $output_dir/Clinvar_XML_Parser_full.out \
 #DO NOT use -d all on this data, it will drop any subsequent alleles that share the same coordinates.
 bcftools concat -a -d none $output_dir/b37/multi/clinvar_alleles.multi.b37.vcf.gz \
 $output_dir/b37/single/clinvar_alleles.single.b37.vcf.gz \
--o $output_dir/clinvar_alleles.combined.b37.vcf.gz
+-o $output_dir/clinvar_alleles.combined.b37.vcf
 
-java -Xmx8g -Xms2g -jar /usr/local/software/picard/picard.jar SortVcf INPUT=clinvar_alleles.combined.b37.unique.vcf.gz OUTPUT=clinvar_alleles.combined.b37.unique.sorted.vcf.gz
+java -Xmx8g -Xms2g -jar /usr/local/software/picard/picard.jar SortVcf INPUT=clinvar_alleles.combined.b37.unique.vcf OUTPUT=clinvar_alleles.combined.b37.unique.sorted.vcf
+
+bgzip clinvar_alleles.combined.b37.unique.sorted.vcf.gz
+tabix clinvar_alleles.combined.b37.unique.sorted.vcf.gz
 
 bsub -P congenica -o $output_dir/ClinVar_Load_Log.out \
 -e $output_dir/ClinVar_Load_Log.err \
