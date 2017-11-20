@@ -86,7 +86,7 @@ def table_to_vcf(input_table_path):
         vcf_row = []
         vcf_row.append(table_row["chrom"])
         vcf_row.append(table_row["pos"])
-        vcf_row.append(table_row["hgvs_c"])  # ID
+        vcf_row.append(table_row["dbsnp"])  # ID
         vcf_row.append(table_row["ref"])
         vcf_row.append(table_row["alt"])
         vcf_row.append('.')  # QUAL
