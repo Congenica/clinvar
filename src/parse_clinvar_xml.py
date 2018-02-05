@@ -36,7 +36,7 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
     header = [
         'chrom', 'pos', 'ref', 'alt', 'dbsnp', 'measureset_type','measureset_id','rcv',
         'allele_id','symbol',
-        'hgvs_c','hgvs_p','molecular_consequence',
+        'clnhgvs','hgvs_p','molecular_consequence',
         'clinical_significance','clinical_significance_ordered','review_status','review_status_ordered','all_submitters','all_traits',
         'all_pmids','inheritance_modes', 'age_of_onset', 'prevalence', 
         'disease_mechanism', 'origin','xrefs'
@@ -215,7 +215,7 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
                         break
 
             current_row['molecular_consequence']=set()
-            current_row['hgvs_c']=''
+            current_row['clnhgvs']=''
             current_row['hgvs_p']=''
 
             attributeset=measure[i].findall('./AttributeSet')
@@ -223,9 +223,9 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
                 attribute_type=attribute_node.find('./Attribute').attrib.get('Type')
                 attribute_value=attribute_node.find('./Attribute').text;
             
-                #find hgvs_c
+                #find clnhgvs
                 if(attribute_type=='HGVS, coding, RefSeq'):
-                    current_row['hgvs_c']=attribute_value
+                    current_row['clnhgvs']=attribute_value
             
                 #find hgvs_p
                 if(attribute_type=='HGVS, protein, RefSeq'):
