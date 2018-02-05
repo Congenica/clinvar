@@ -58,7 +58,7 @@ def group_alleles(data1, data2):
     # 'pathogenic', 'benign', 'conflicted', 'gold_stars',
     # concatenate columns that may have lists of values    
     for column_name in ('measureset_type','measureset_id','rcv','allele_id',
-        'symbol', 'clnhgvs','hgvs_p','molecular_consequence','clinical_significance', 
+        'symbol', 'clnhgvs','hgvs_p','molecular_consequence','clnsig', 
         'review_status', 'all_submitters',
         'all_traits','all_pmids', 'inheritance_modes', 'age_of_onset','prevalence',
         'disease_mechanism', 'origin', 'xrefs'):
