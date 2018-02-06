@@ -37,7 +37,7 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
         'chrom', 'pos', 'ref', 'alt', 'dbsnp', 'measureset_type','measureset_id','rcv',
         'allele_id','symbol',
         'clnhgvs','hgvs_p','molecular_consequence',
-        'clnsig','clnsig_ordered','review_status','review_status_ordered','all_submitters','all_traits',
+        'clnsig','clinical_significance_ordered','review_status','review_status_ordered','all_submitters','all_traits',
         'all_pmids','inheritance_modes', 'age_of_onset', 'prevalence', 
         'disease_mechanism', 'origin','xrefs'
     ]
