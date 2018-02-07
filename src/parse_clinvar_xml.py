@@ -34,7 +34,7 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
 
     #measureset -> rcv (one to many) 
     header = [
-        'chrom', 'pos', 'ref', 'alt', 'dbsnp', 'measureset_type','measureset_id','rcv',
+        'chrom', 'pos', 'ref', 'alt', 'rs', 'measureset_type','measureset_id','rcv',
         'allele_id','symbol',
         'clnhgvs','hgvs_p','molecular_consequence',
         'clnsig','clinical_significance_ordered','review_status','review_status_ordered','all_submitters','all_traits',
@@ -167,12 +167,12 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
                 current_row['xrefs'].add("%s:%s" % (xref_db, xref_id))
 
         #JB-CG: Add parser for DBSNP node so we can get rsIDs
-            current_row['dbsnp'] = "BLANK"
+            current_row['rs'] = "BLANK"
             for xref_node in measureset.findall('.//Measure/XRef'):
                 xref_type = xref_node.attrib.get('Type')
                 if xref_type in {'rs'}:
                     print "### %s" % xref_node.attrib.get('ID')
-                    current_row['dbsnp'] = xref_node.attrib.get('ID')
+                    current_row['rs'] = xref_node.attrib.get('ID')
 
         current_row['origin']=set()
         for origin in elem.findall('.//ReferenceClinVarAssertion/ObservedIn/Sample/Origin'):

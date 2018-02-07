@@ -98,7 +98,7 @@ def table_to_vcf(input_table_path):
         #    INFO - additional information: (String, no white-space, semi-colons, or equals-signs permitted; commas are
         #    permitted only as delimiters for lists of values) INFO fields are encoded as a semicolon-separated series of short
         #    keys with optional values in the format: <key>=<data>[,data].
-        for key in ['dbsnp','measureset_type','measureset_id','rcv','allele_id',
+        for key in ['rs','measureset_type','measureset_id','rcv','allele_id',
         'symbol', 'clnhgvs','hgvs_p','molecular_consequence','clnsig','sapientia_clinsig',
         'pathogenic', 'benign', 'conflicted', 'review_status', 'gold_stars','all_submitters',
         'all_traits','all_pmids', 'inheritance_modes', 'age_of_onset','prevalence', 'disease_mechanism', 
