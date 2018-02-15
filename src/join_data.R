@@ -88,16 +88,16 @@ colnames(txt_download) = replace(colnames(txt_download), 1, "allele_id")
 
 desired_columns<-c('allele_id','clinicalsignificance','reviewstatus','lastevaluated')
 txt_extract = subset(txt_download, assembly == 'GRCh37', select=desired_columns)
-colnames(txt_extract)<-c('allele_id','clinical_significance','review_status','last_evaluated')
-#drop the clinical_significance and review_status in clinvar_record.tsv 
+colnames(txt_extract)<-c('allele_id','clnsig','review_status','last_evaluated')
+#drop the clnsig and review_status in clinvar_record.tsv 
 #use the summary ones in variant_summary.txt
-xml_extract = subset(xml_raw,select=-c(clinical_significance,review_status))
+xml_extract = subset(xml_raw,select=-c(clnsig,review_status))
 
 # join on allele id
 combined = merge(xml_extract, txt_extract,by='allele_id',all.x=FALSE)
 
 #Turn the list of pathogenicity terms into a string for the single most severe term, in a suitable form for Sapientia's
-sapientia_clinsig<-sapply(as.character(combined$clinical_significance),convert_pathogenicity)
+sapientia_clinsig<-sapply(as.character(combined$clnsig),convert_pathogenicity)
 sapientia_clinsig<-sapply(sapientia_clinsig,as.character)
 
 if(length(sapientia_clinsig)>0){
@@ -125,16 +125,16 @@ combined$review_status<-sapply(combined$review_status,as.character)
 combined$gold_stars = sapply(combined$review_status, function(k) { gold_stars_table[[k]] })
 
 # pathogenic = 1 if at least one submission says path or likely path, 0 otherwise
-combined$pathogenic = as.integer(grepl('athogenic',combined$clinical_significance))
+combined$pathogenic = as.integer(grepl('athogenic',combined$clnsig))
 
 # conflicted = 1 if at least one submission each of [likely] benign and [likely] pathogenic
-combined$conflicted = as.integer(grepl('athogenic',combined$clinical_significance) & grepl('enign',combined$clinical_significance))
+combined$conflicted = as.integer(grepl('athogenic',combined$clnsig) & grepl('enign',combined$clnsig))
 
 # benign = 1 if at least one submission says benign or likely benign, 0 otherwise
-combined$benign = as.integer(grepl('enign',combined$clinical_significance))
+combined$benign = as.integer(grepl('enign',combined$clnsig))
 
 # re-order the columns
-combined = combined[,c('chrom','pos','ref','alt','dbsnp','measureset_type','measureset_id','rcv','allele_id','symbol', 'hgvs_c','hgvs_p','molecular_consequence','clinical_significance', 'sapientia_clinsig', 'pathogenic', 'benign', 'conflicted', 'review_status','last_evaluated', 'gold_stars','all_submitters','all_traits','all_pmids', 'inheritance_modes', 'age_of_onset','prevalence', 'disease_mechanism', 'origin', 'xrefs')]
+combined = combined[,c('chrom','pos','ref','alt','rs','measureset_type','measureset_id','rcv','allele_id','symbol', 'clnhgvs','hgvs_p','molecular_consequence','clnsig', 'sapientia_clinsig', 'pathogenic', 'benign', 'conflicted', 'review_status','last_evaluated', 'gold_stars','all_submitters','all_traits','all_pmids', 'inheritance_modes', 'age_of_onset','prevalence', 'disease_mechanism', 'origin', 'xrefs')]
 
 write.table(combined, output_table, sep='\t', row.names=F, col.names=T, quote=F)
 

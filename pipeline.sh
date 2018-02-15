@@ -7,11 +7,9 @@
 
 source clinvar_pipeline.cfg
 
-wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/archive/$variant_summary.txt.gz \
--P $clinvar_refdir
+wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/archive/$variant_summary -P $clinvar_refdir
 
-wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/xml/ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/xml/$xml \
--P /scratch/data/reference/ClinVar
+wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/xml/$xml -P $clinvar_refdir
 
 #Do I want to have this auto-remove or rename old logs?
 bsub -q docker -o $output_dir/Clinvar_XML_Parser_full.out \
@@ -30,6 +28,8 @@ $output_dir/b37/single/clinvar_alleles.single.b37.vcf.gz \
 -o $output_dir/clinvar_alleles.combined.b37.vcf.gz
 
 java -Xmx8g -Xms2g -jar /usr/local/software/picard/picard.jar SortVcf INPUT=clinvar_alleles.combined.b37.unique.vcf.gz OUTPUT=clinvar_alleles.combined.b37.unique.sorted.vcf.gz
+
+bgzip clinvar_alleles.combined.b37.unique.vcf
 
 bsub -P congenica -o $output_dir/ClinVar_Load_Log.out \
 -e $output_dir/ClinVar_Load_Log.err \
