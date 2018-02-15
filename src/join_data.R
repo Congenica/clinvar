@@ -134,7 +134,7 @@ combined$conflicted = as.integer(grepl('athogenic',combined$clnsig) & grepl('eni
 combined$benign = as.integer(grepl('enign',combined$clnsig))
 
 # re-order the columns
-combined = combined[,c('chrom','pos','ref','alt','dbsnp','measureset_type','measureset_id','rcv','allele_id','symbol', 'clnhgvs','hgvs_p','molecular_consequence','clnsig', 'sapientia_clinsig', 'pathogenic', 'benign', 'conflicted', 'review_status','last_evaluated', 'gold_stars','all_submitters','all_traits','all_pmids', 'inheritance_modes', 'age_of_onset','prevalence', 'disease_mechanism', 'origin', 'xrefs')]
+combined = combined[,c('chrom','pos','ref','alt','rs','measureset_type','measureset_id','rcv','allele_id','symbol', 'clnhgvs','hgvs_p','molecular_consequence','clnsig', 'sapientia_clinsig', 'pathogenic', 'benign', 'conflicted', 'review_status','last_evaluated', 'gold_stars','all_submitters','all_traits','all_pmids', 'inheritance_modes', 'age_of_onset','prevalence', 'disease_mechanism', 'origin', 'xrefs')]
 
 write.table(combined, output_table, sep='\t', row.names=F, col.names=T, quote=F)
 
