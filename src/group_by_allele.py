@@ -61,7 +61,7 @@ def group_alleles(data1, data2):
         'symbol', 'clnhgvs','hgvs_p','molecular_consequence','clnsig', 
         'review_status', 'all_submitters',
         'all_traits','all_pmids', 'inheritance_modes', 'age_of_onset','prevalence',
-        'disease_mechanism', 'origin', 'xrefs'):
+        'disease_mechanism', 'clnorigin', 'xrefs'):
         all_non_empty_values = filter(lambda s: s, data1[column_name].split(';') + data2[column_name].split(';'))
 
         # deduplicate values, while preserving order

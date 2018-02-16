@@ -51,7 +51,7 @@ def table_to_vcf(input_table_path):
 ##INFO=<ID=AGE_OF_ONSET,Number=1,Type=String,Description="AGE_OF_ONSET">
 ##INFO=<ID=PREVALENCE,Number=1,Type=String,Description="PREVALENCE">
 ##INFO=<ID=DISEASE_MECHANISM,Number=1,Type=String,Description="DISEASE_MECHANISM">
-##INFO=<ID=ORIGIN,Number=1,Type=String,Description="ORIGIN">
+##INFO=<ID=CLNORIGIN,Number=1,Type=String,Description="ORIGIN">
 ##INFO=<ID=XREFS,Number=1,Type=String,Description="CROSS_REFERENCES">
 ##contig=<ID=1,length=249250621>
 ##contig=<ID=2,length=243199373>
@@ -102,7 +102,7 @@ def table_to_vcf(input_table_path):
         'symbol', 'clnhgvs','hgvs_p','molecular_consequence','clnsig','sapientia_clinsig',
         'pathogenic', 'benign', 'conflicted', 'review_status', 'gold_stars','all_submitters',
         'all_traits','all_pmids', 'inheritance_modes', 'age_of_onset','prevalence', 'disease_mechanism', 
-        'origin', 'xrefs']:
+        'clnorigin', 'xrefs']:
             if pd.isnull(table_row[key]):
                 continue
             value = str(table_row[key])
