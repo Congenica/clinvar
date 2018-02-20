@@ -39,7 +39,7 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
         'clnhgvs','hgvs_p','molecular_consequence',
         'clnsig','clinical_significance_ordered','review_status','review_status_ordered','all_submitters','all_traits',
         'all_pmids','inheritance_modes', 'age_of_onset', 'prevalence', 
-        'disease_mechanism', 'origin','xrefs'
+        'disease_mechanism', 'clnorigin','xrefs'
     ]
     dest.write(('\t'.join(header) + '\n').encode('utf-8'))
     if multi is not None:
@@ -174,11 +174,11 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
                     print "### %s" % xref_node.attrib.get('ID')
                     current_row['rs'] = xref_node.attrib.get('ID')
 
-        current_row['origin']=set()
+        current_row['clnorigin']=set()
         for origin in elem.findall('.//ReferenceClinVarAssertion/ObservedIn/Sample/Origin'):
-            current_row['origin'].add(origin.text)
+            current_row['clnorigin'].add(origin.text)
         
-        for column_name in ('all_traits', 'inheritance_modes', 'age_of_onset', 'prevalence', 'disease_mechanism', 'origin','xrefs'):
+        for column_name in ('all_traits', 'inheritance_modes', 'age_of_onset', 'prevalence', 'disease_mechanism', 'clnorigin','xrefs'):
             column_value = current_row[column_name] if type(current_row[column_name]) == list else sorted(current_row[column_name])  # sort columns of type 'set' to get deterministic order
             current_row[column_name] = remove_newlines_and_tabs(';'.join(map(replace_semicolons, column_value)))
 

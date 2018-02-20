@@ -218,7 +218,7 @@ for genome_build in ('b37', 'b38'):
         # Columns: 1: chrom, 2: pos, 3: ref, 4: alt, 5: measureset_type, 6: measureset_id, 7: rcv, 8: allele_id,
         # 9: symbol, 10: hgvs_c, 11: hgvs_p, 12: molecular_consequence, 13: clinical_significance, 14: pathogenic, 15: benign, 16: conflicted, 17: review_status,
         # 18: gold_stars, 19: all_submitters, 20: all_traits, 21: all_pmids, 22: inheritance_modes,
-        # 23: age_of_onset, 24: prevalence, 25: disease_mechanism, 26: origin, 27: xrefs
+        # 23: age_of_onset, 24: prevalence, 25: disease_mechanism, 26: clnorigin, 27: xrefs
 
         python_oneliner_to_format_stats = "import sys;print(', '.join(['%s: %s' % (i+1, v) for l in sys.stdin for i,v in enumerate(l.split())]))"
         job.add("""echo \
