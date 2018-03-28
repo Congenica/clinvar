@@ -28,32 +28,32 @@ convert_pathogenicity<-function(pathogenicity){
   
   matches<-pathogenicity_list %in% pathogenic_terms 
   if(TRUE %in% matches){
-    return("Clearly pathogenic")
+    return("Pathogenic")
   }
   
   matches<-pathogenicity_list %in% likely_pathogenic_terms 
   if(TRUE %in% matches){
-    return("Likely to be pathogenic")
+    return("Likely pathogenic")
   }
   
   matches<-pathogenicity_list %in% vus_terms 
   if(TRUE %in% matches){
-    return("Unknown significance (VUS)")
+    return("Uncertain significance")
   }
   
   matches<-pathogenicity_list %in% likely_benign_terms 
   if(TRUE %in% matches){
-    return("Unlikely to be pathogenic")
+    return("Likely benign")
   }
   
   matches<-pathogenicity_list %in% benign_terms 
   if(TRUE %in% matches){
-    return("Clearly not pathogenic")
+    return("Benign")
   }
   
   matches<-pathogenicity_list %in% unused_terms 
   if(TRUE %in% matches){
-    return("")
+    return("Excluded")
   }
   
   else {
