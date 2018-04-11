@@ -183,7 +183,7 @@ for genome_build in ('b37', 'b38'):
                 ])
 
         # create vcf
-        job.add(("python -u IN:clinvar_table_to_vcf.py IN:%(tmp_dir)s/clinvar_alleles.%(fsuffix)s.tsv.gz | bgzip -c > OUT:%(tmp_dir)s/clinvar_alleles.%(fsuffix)s.vcf.gz") % locals())  # create compressed version
+        job.add(("python -u IN:clinvar_table_to_vcf.py IN:%(tmp_dir)s/clinvar_alleles.%(fsuffix)s.tsv.gz IN:%(genome_build)| bgzip -c > OUT:%(tmp_dir)s/clinvar_alleles.%(fsuffix)s.vcf.gz") % locals())  # create compressed version
         job.add("tabix IN:%(tmp_dir)s/clinvar_alleles.%(fsuffix)s.vcf.gz" % locals(), output_filenames=["%(tmp_dir)s/clinvar_alleles.%(fsuffix)s.vcf.gz.tbi" % locals()])
         job.add("cp IN:%(tmp_dir)s/clinvar_alleles.%(fsuffix)s.vcf.gz IN:%(tmp_dir)s/clinvar_alleles.%(fsuffix)s.vcf.gz.tbi %(output_dir)s/" % locals(), output_filenames=[
             "%(output_dir)s/clinvar_alleles.%(fsuffix)s.vcf.gz" % locals(),
@@ -218,7 +218,7 @@ for genome_build in ('b37', 'b38'):
         # Columns: 1: chrom, 2: pos, 3: ref, 4: alt, 5: measureset_type, 6: measureset_id, 7: rcv, 8: allele_id,
         # 9: symbol, 10: hgvs_c, 11: hgvs_p, 12: molecular_consequence, 13: clinical_significance, 14: pathogenic, 15: benign, 16: conflicted, 17: review_status,
         # 18: gold_stars, 19: all_submitters, 20: all_traits, 21: all_pmids, 22: inheritance_modes,
-        # 23: age_of_onset, 24: prevalence, 25: disease_mechanism, 26: origin, 27: xrefs
+        # 23: age_of_onset, 24: prevalence, 25: disease_mechanism, 26: origin, 27: xrefs, 28: type
 
         python_oneliner_to_format_stats = "import sys;print(', '.join(['%s: %s' % (i+1, v) for l in sys.stdin for i,v in enumerate(l.split())]))"
         job.add("""echo \
@@ -228,7 +228,7 @@ for genome_build in ('b37', 'b38'):
             OUT:%(tmp_dir)s/clinvar_alleles_stats.%(fsuffix)s.txt &&
         echo ================ >> OUT:%(tmp_dir)s/clinvar_alleles_stats.%(fsuffix)s.txt &&
         echo Total Rows: $(gunzip -c IN:%(tmp_dir)s/clinvar_alleles.%(fsuffix)s.tsv.gz | tail -n +2 | wc -l) >> OUT:%(tmp_dir)s/clinvar_alleles_stats.%(fsuffix)s.txt &&
-        for i in 5 13 14 15 16 17 18 19 22 23 24 25 26; do
+        for i in 5 13 14 15 16 17 18 19 22 23 24 25 26 28; do
             echo ================ >> OUT:%(tmp_dir)s/clinvar_alleles_stats.%(fsuffix)s.txt ;
             echo "column ${i}: $(gunzip -c IN:%(tmp_dir)s/clinvar_alleles.%(fsuffix)s.tsv.gz | head -n 1 | cut -f $i)" >> OUT:%(tmp_dir)s/clinvar_alleles_stats.%(fsuffix)s.txt ;
             gunzip -c IN:%(tmp_dir)s/clinvar_alleles.%(fsuffix)s.tsv.gz | tail -n +2 | cut -f $i | tr ';' '\n' | sort | uniq -c | sort -r -n >> OUT:%(tmp_dir)s/clinvar_alleles_stats.%(fsuffix)s.txt ;
