@@ -13,7 +13,7 @@ def gzopen(path, mode='r', verbose=True):
         return open(path, mode)
 
 
-def table_to_vcf(input_table_path):
+def table_to_vcf(input_table_path,genome):
     # validate args
     if not os.path.isfile(input_table_path):
         sys.exit("ERROR: %s not found" % input_table_path)
@@ -24,35 +24,36 @@ def table_to_vcf(input_table_path):
     missing_columns = {"chrom", "pos", "ref", "alt"} - set(t.columns)
     if missing_columns:
         sys.exit("ERROR: %s is missing columns: %s" % (input_table_path, str(missing_columns)))
-
-    print("""
+    if genome == "b37":
+        print("""
 ##fileformat=VCFv4.1
 ##source=clinvar
 ##INFO=<ID=RS,Number=1,Type=String,Description="RSID">
 ##INFO=<ID=MEASURESET_TYPE,Number=1,Type=String,Description="MEASURESET_TYPE">
 ##INFO=<ID=MEASURESET_ID,Number=1,Type=String,Description="MEASURESET_ID">
-##INFO=<ID=RCV,Number=1,Type=String,Description="RCV">
+##INFO=<ID=CLNACC,Number=1,Type=String,Description="CLNACC">
 ##INFO=<ID=ALLELE_ID,Number=1,Type=String,Description="ALLELE_ID">
 ##INFO=<ID=SYMBOL,Number=1,Type=String,Description="SYMBOL">
-##INFO=<ID=HGVS_C,Number=1,Type=String,Description="HGVS_C">
+##INFO=<ID=CLNHGVS,Number=1,Type=String,Description="CLNHGVS">
 ##INFO=<ID=HGVS_P,Number=1,Type=String,Description="HGVS_P">
 ##INFO=<ID=MOLECULAR_CONSEQUENCE,Number=1,Type=String,Description="MOLECULAR_CONSEQUENCE">
-##INFO=<ID=CLINICAL_SIGNIFICANCE,Number=1,Type=String,Description="CLINICAL_SIGNIFICANCE">
-##INFO=<ID=SAPIENTIA_CLINSIG,Number=1,Type=String,Description="SAPIENTIA_CLINICAL_SIGNIFICANCE">
+##INFO=<ID=ORIGINAL_CLNSIG,Number=1,Type=String,Description="CLINICAL_SIGNIFICANCE">
+##INFO=<ID=CLNSIG,Number=1,Type=String,Description="CLINICAL_SIGNIFICANCE_FROM_CLINVAR">
 ##INFO=<ID=PATHOGENIC,Number=1,Type=String,Description="PATHOGENIC">
 ##INFO=<ID=BENIGN,Number=1,Type=String,Description="BENIGN">
 ##INFO=<ID=CONFLICTED,Number=1,Type=String,Description="CONFLICTED">
-##INFO=<ID=REVIEW_STATUS,Number=1,Type=String,Description="REVIEW_STATUS">
-##INFO=<ID=GOLD_STARS,Number=1,Type=String,Description="Number of gold stars as shown on clinvar web pages to summarize review status. Lookup table described at http://www.ncbi.nlm.nih.gov/clinvar/docs/details/ was used to map the REVIEW_STATUS value to this number.">
+##INFO=<ID=CLNREVSTAT,Number=1,Type=String,Description="CLNREVSTAT">
+##INFO=<ID=GOLD_STARS,Number=1,Type=String,Description="Number of gold stars as shown on clinvar web pages to summarize review status. Lookup table described at http://www.ncbi.nlm.nih.gov/clinvar/docs/details/ was used to map the CLNREVSTAT value to this number.">
 ##INFO=<ID=ALL_SUBMITTERS,Number=1,Type=String,Description="ALL_SUBMITTERS">
-##INFO=<ID=ALL_TRAITS,Number=1,Type=String,Description="ALL_TRAITS">
+##INFO=<ID=CLNDBN,Number=1,Type=String,Description="CLNDBN">
 ##INFO=<ID=ALL_PMIDS,Number=1,Type=String,Description="ALL_PMIDS">
 ##INFO=<ID=INHERITANCE_MODES,Number=1,Type=String,Description="INHERITANCE_MODES">
 ##INFO=<ID=AGE_OF_ONSET,Number=1,Type=String,Description="AGE_OF_ONSET">
 ##INFO=<ID=PREVALENCE,Number=1,Type=String,Description="PREVALENCE">
 ##INFO=<ID=DISEASE_MECHANISM,Number=1,Type=String,Description="DISEASE_MECHANISM">
-##INFO=<ID=ORIGIN,Number=1,Type=String,Description="ORIGIN">
+##INFO=<ID=CLNORIGIN,Number=1,Type=String,Description="CLNORIGIN">
 ##INFO=<ID=XREFS,Number=1,Type=String,Description="CROSS_REFERENCES">
+##INFO=<ID=VC,Number=1,Type=String,Description="VARIANT CLASS">
 ##contig=<ID=1,length=249250621>
 ##contig=<ID=2,length=243199373>
 ##contig=<ID=3,length=198022430>
@@ -79,7 +80,68 @@ def table_to_vcf(input_table_path):
 ##contig=<ID=X,length=155270560>
 ##contig=<ID=Y,length=59373566>
 ##reference=Homo_sapiens_assembly19.fasta
-""".strip())
+        """.strip())
+
+    if genome == "b38":
+        print("""
+##fileformat=VCFv4.1
+##FILTER=<ID=PASS,Description="All filters passed">
+##source=clinvar
+##INFO=<ID=RS,Number=1,Type=String,Description="RSID">
+##INFO=<ID=MEASURESET_TYPE,Number=1,Type=String,Description="MEASURESET_TYPE">
+##INFO=<ID=MEASURESET_ID,Number=1,Type=String,Description="MEASURESET_ID">
+##INFO=<ID=CLNACC,Number=1,Type=String,Description="CLNACC">
+##INFO=<ID=ALLELE_ID,Number=1,Type=String,Description="ALLELE_ID">
+##INFO=<ID=SYMBOL,Number=1,Type=String,Description="SYMBOL">
+##INFO=<ID=CLNHGVS,Number=1,Type=String,Description="CLNHGVS">
+##INFO=<ID=HGVS_P,Number=1,Type=String,Description="HGVS_P">
+##INFO=<ID=MOLECULAR_CONSEQUENCE,Number=1,Type=String,Description="MOLECULAR_CONSEQUENCE">
+##INFO=<ID=ORIGINAL_CLNSIG,Number=1,Type=String,Description="CLINICAL_SIGNIFICANCE">
+##INFO=<ID=CLNSIG,Number=1,Type=String,Description="CLINICAL_SIGNIFICANCE_FROM_CLINVAR">
+##INFO=<ID=PATHOGENIC,Number=1,Type=String,Description="PATHOGENIC">
+##INFO=<ID=BENIGN,Number=1,Type=String,Description="BENIGN">
+##INFO=<ID=CONFLICTED,Number=1,Type=String,Description="CONFLICTED">
+##INFO=<ID=CLNREVSTAT,Number=1,Type=String,Description="CLNREVSTAT">
+##INFO=<ID=GOLD_STARS,Number=1,Type=String,Description="Number of gold stars as shown on clinvar web pages to summarize review status. Lookup table described at http://www.ncbi.nlm.nih.gov/clinvar/docs/details/ was used to map the CLNREVSTAT value to this number.">
+##INFO=<ID=ALL_SUBMITTERS,Number=1,Type=String,Description="ALL_SUBMITTERS">
+##INFO=<ID=CLNDBN,Number=1,Type=String,Description="CLNDBN">
+##INFO=<ID=ALL_PMIDS,Number=1,Type=String,Description="ALL_PMIDS">
+##INFO=<ID=INHERITANCE_MODES,Number=1,Type=String,Description="INHERITANCE_MODES">
+##INFO=<ID=AGE_OF_ONSET,Number=1,Type=String,Description="AGE_OF_ONSET">
+##INFO=<ID=PREVALENCE,Number=1,Type=String,Description="PREVALENCE">
+##INFO=<ID=DISEASE_MECHANISM,Number=1,Type=String,Description="DISEASE_MECHANISM">
+##INFO=<ID=CLNORIGIN,Number=1,Type=String,Description="CLNORIGIN">
+##INFO=<ID=XREFS,Number=1,Type=String,Description="CROSS_REFERENCES">
+##INFO=<ID=VC,Number=1,Type=String,Description="VARIANT CLASS">
+##contig=<ID=1,assembly=b38,length=248956422>
+##contig=<ID=2,assembly=b38,length=242193529>
+##contig=<ID=3,assembly=b38,length=198295559>
+##contig=<ID=4,assembly=b38,length=190214555>
+##contig=<ID=5,assembly=b38,length=181538259>
+##contig=<ID=6,assembly=b38,length=170805979>
+##contig=<ID=7,assembly=b38,length=159345973>
+##contig=<ID=8,assembly=b38,length=145138636>
+##contig=<ID=9,assembly=b38,length=138394717>
+##contig=<ID=10,assembly=b38,length=133797422>
+##contig=<ID=11,assembly=b38,length=135086622>
+##contig=<ID=12,assembly=b38,length=133275309>
+##contig=<ID=13,assembly=b38,length=114364328>
+##contig=<ID=14,assembly=b38,length=107043718>
+##contig=<ID=15,assembly=b38,length=101991189>
+##contig=<ID=16,assembly=b38,length=90338345>
+##contig=<ID=17,assembly=b38,length=83257441>
+##contig=<ID=18,assembly=b38,length=80373285>
+##contig=<ID=19,assembly=b38,length=58617616>
+##contig=<ID=20,assembly=b38,length=64444167>
+##contig=<ID=21,assembly=b38,length=46709983>
+##contig=<ID=22,assembly=b38,length=50818468>
+##contig=<ID=X,assembly=b38,length=156040895>
+##contig=<ID=Y,assembly=b38,length=57227415>
+##contig=<ID=MT,assembly=b38,length=16571>
+        """.strip())
+
+    else:
+        sys.exit("ERROR: Genome name is %s, not 'b37' or 'b38'" % genome)
 
     print("\t".join(["#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO"]))
     for i, table_row in t.iterrows():
@@ -102,7 +164,7 @@ def table_to_vcf(input_table_path):
         'symbol', 'hgvs_c','hgvs_p','molecular_consequence','clinical_significance','sapientia_clinsig',
         'pathogenic', 'benign', 'conflicted', 'review_status', 'gold_stars','all_submitters',
         'all_traits','all_pmids', 'inheritance_modes', 'age_of_onset','prevalence', 'disease_mechanism', 
-        'origin', 'xrefs']:
+        'origin', 'xrefs', 'type']:
             if pd.isnull(table_row[key]):
                 continue
             value = str(table_row[key])
@@ -123,4 +185,4 @@ if __name__ == '__main__':
     parser.add_argument('input_table_path', help="Tab-delimited input table")
     args = parser.parse_args()
 
-    table_to_vcf(args.input_table_path)
+    table_to_vcf(args.input_table_path,args.genome)
