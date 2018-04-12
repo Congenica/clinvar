@@ -165,7 +165,7 @@ def table_to_vcf(input_table_path,genome):
             if pd.isnull(table_row[key]):
                 continue
             value = str(table_row[key])
-            value = re.sub('\s*[,]\s*', '..', value)  # replace , with ..
+            value = re.sub('\s*[,]\s*', '|', value)  # replace , with ..
             value = re.sub('\s*[;]\s*', '|', value)  # replace ; with |
             value = value.replace("=", " eq ").replace(" ", "_")
             
