@@ -31,28 +31,28 @@ def table_to_vcf(input_table_path,genome):
 ##INFO=<ID=RS,Number=1,Type=String,Description="RSID">
 ##INFO=<ID=MEASURESET_TYPE,Number=1,Type=String,Description="MEASURESET_TYPE">
 ##INFO=<ID=MEASURESET_ID,Number=1,Type=String,Description="MEASURESET_ID">
-##INFO=<ID=CLNACC,Number=1,Type=String,Description="CLNACC">
+##INFO=<ID=CLNACC,Number=.,Type=String,Description="CLNACC">
 ##INFO=<ID=ALLELE_ID,Number=1,Type=String,Description="ALLELE_ID">
 ##INFO=<ID=SYMBOL,Number=1,Type=String,Description="SYMBOL">
-##INFO=<ID=CLNHGVS,Number=1,Type=String,Description="CLNHGVS">
+##INFO=<ID=CLNHGVS,Number=.,Type=String,Description="CLNHGVS">
 ##INFO=<ID=HGVS_P,Number=1,Type=String,Description="HGVS_P">
 ##INFO=<ID=MOLECULAR_CONSEQUENCE,Number=1,Type=String,Description="MOLECULAR_CONSEQUENCE">
-##INFO=<ID=ORIGINAL_CLNSIG,Number=1,Type=String,Description="CLINICAL_SIGNIFICANCE">
+##INFO=<ID=ORIGINAL_CLNSIG,Number=.,Type=String,Description="CLINICAL_SIGNIFICANCE">
 ##INFO=<ID=CLNSIG,Number=1,Type=String,Description="CLINICAL_SIGNIFICANCE_FROM_CLINVAR">
 ##INFO=<ID=PATHOGENIC,Number=1,Type=String,Description="PATHOGENIC">
 ##INFO=<ID=BENIGN,Number=1,Type=String,Description="BENIGN">
 ##INFO=<ID=CONFLICTED,Number=1,Type=String,Description="CONFLICTED">
-##INFO=<ID=CLNREVSTAT,Number=1,Type=String,Description="CLNREVSTAT">
+##INFO=<ID=CLNREVSTAT,Number=.,Type=String,Description="CLNREVSTAT">
 ##INFO=<ID=GOLD_STARS,Number=1,Type=String,Description="Number of gold stars as shown on clinvar web pages to summarize review status. Lookup table described at http://www.ncbi.nlm.nih.gov/clinvar/docs/details/ was used to map the CLNREVSTAT value to this number.">
-##INFO=<ID=ALL_SUBMITTERS,Number=1,Type=String,Description="ALL_SUBMITTERS">
-##INFO=<ID=CLNDBN,Number=1,Type=String,Description="CLNDBN">
-##INFO=<ID=ALL_PMIDS,Number=1,Type=String,Description="ALL_PMIDS">
-##INFO=<ID=INHERITANCE_MODES,Number=1,Type=String,Description="INHERITANCE_MODES">
+##INFO=<ID=ALL_SUBMITTERS,Number=.,Type=String,Description="ALL_SUBMITTERS">
+##INFO=<ID=CLNDBN,Number=.,Type=String,Description="CLNDBN">
+##INFO=<ID=ALL_PMIDS,Number=.,Type=String,Description="ALL_PMIDS">
+##INFO=<ID=INHERITANCE_MODES,Number=.,Type=String,Description="INHERITANCE_MODES">
 ##INFO=<ID=AGE_OF_ONSET,Number=1,Type=String,Description="AGE_OF_ONSET">
 ##INFO=<ID=PREVALENCE,Number=1,Type=String,Description="PREVALENCE">
 ##INFO=<ID=DISEASE_MECHANISM,Number=1,Type=String,Description="DISEASE_MECHANISM">
-##INFO=<ID=CLNORIGIN,Number=1,Type=String,Description="CLNORIGIN">
-##INFO=<ID=XREFS,Number=1,Type=String,Description="CROSS_REFERENCES">
+##INFO=<ID=CLNORIGIN,Number=.,Type=String,Description="CLNORIGIN">
+##INFO=<ID=XREFS,Number=.,Type=String,Description="CROSS_REFERENCES">
 ##INFO=<ID=VC,Number=1,Type=String,Description="VARIANT CLASS">
 ##contig=<ID=1,length=249250621>
 ##contig=<ID=2,length=243199373>
@@ -90,28 +90,28 @@ def table_to_vcf(input_table_path,genome):
 ##INFO=<ID=RS,Number=1,Type=String,Description="RSID">
 ##INFO=<ID=MEASURESET_TYPE,Number=1,Type=String,Description="MEASURESET_TYPE">
 ##INFO=<ID=MEASURESET_ID,Number=1,Type=String,Description="MEASURESET_ID">
-##INFO=<ID=CLNACC,Number=1,Type=String,Description="CLNACC">
+##INFO=<ID=CLNACC,Number=.,Type=String,Description="CLNACC">
 ##INFO=<ID=ALLELE_ID,Number=1,Type=String,Description="ALLELE_ID">
 ##INFO=<ID=SYMBOL,Number=1,Type=String,Description="SYMBOL">
-##INFO=<ID=CLNHGVS,Number=1,Type=String,Description="CLNHGVS">
+##INFO=<ID=CLNHGVS,Number=.,Type=String,Description="CLNHGVS">
 ##INFO=<ID=HGVS_P,Number=1,Type=String,Description="HGVS_P">
 ##INFO=<ID=MOLECULAR_CONSEQUENCE,Number=1,Type=String,Description="MOLECULAR_CONSEQUENCE">
-##INFO=<ID=ORIGINAL_CLNSIG,Number=1,Type=String,Description="CLINICAL_SIGNIFICANCE">
+##INFO=<ID=ORIGINAL_CLNSIG,Number=.,Type=String,Description="CLINICAL_SIGNIFICANCE">
 ##INFO=<ID=CLNSIG,Number=1,Type=String,Description="CLINICAL_SIGNIFICANCE_FROM_CLINVAR">
 ##INFO=<ID=PATHOGENIC,Number=1,Type=String,Description="PATHOGENIC">
 ##INFO=<ID=BENIGN,Number=1,Type=String,Description="BENIGN">
 ##INFO=<ID=CONFLICTED,Number=1,Type=String,Description="CONFLICTED">
-##INFO=<ID=CLNREVSTAT,Number=1,Type=String,Description="CLNREVSTAT">
+##INFO=<ID=CLNREVSTAT,Number=.,Type=String,Description="CLNREVSTAT">
 ##INFO=<ID=GOLD_STARS,Number=1,Type=String,Description="Number of gold stars as shown on clinvar web pages to summarize review status. Lookup table described at http://www.ncbi.nlm.nih.gov/clinvar/docs/details/ was used to map the CLNREVSTAT value to this number.">
-##INFO=<ID=ALL_SUBMITTERS,Number=1,Type=String,Description="ALL_SUBMITTERS">
-##INFO=<ID=CLNDBN,Number=1,Type=String,Description="CLNDBN">
-##INFO=<ID=ALL_PMIDS,Number=1,Type=String,Description="ALL_PMIDS">
-##INFO=<ID=INHERITANCE_MODES,Number=1,Type=String,Description="INHERITANCE_MODES">
+##INFO=<ID=ALL_SUBMITTERS,Number=.,Type=String,Description="ALL_SUBMITTERS">
+##INFO=<ID=CLNDBN,Number=.,Type=String,Description="CLNDBN">
+##INFO=<ID=ALL_PMIDS,Number=.,Type=String,Description="ALL_PMIDS">
+##INFO=<ID=INHERITANCE_MODES,Number=.,Type=String,Description="INHERITANCE_MODES">
 ##INFO=<ID=AGE_OF_ONSET,Number=1,Type=String,Description="AGE_OF_ONSET">
 ##INFO=<ID=PREVALENCE,Number=1,Type=String,Description="PREVALENCE">
 ##INFO=<ID=DISEASE_MECHANISM,Number=1,Type=String,Description="DISEASE_MECHANISM">
-##INFO=<ID=CLNORIGIN,Number=1,Type=String,Description="CLNORIGIN">
-##INFO=<ID=XREFS,Number=1,Type=String,Description="CROSS_REFERENCES">
+##INFO=<ID=CLNORIGIN,Number=.,Type=String,Description="CLNORIGIN">
+##INFO=<ID=XREFS,Number=.,Type=String,Description="CROSS_REFERENCES">
 ##INFO=<ID=VC,Number=1,Type=String,Description="VARIANT CLASS">
 ##contig=<ID=1,assembly=b38,length=248956422>
 ##contig=<ID=2,assembly=b38,length=242193529>
@@ -160,11 +160,8 @@ def table_to_vcf(input_table_path,genome):
         #    INFO - additional information: (String, no white-space, semi-colons, or equals-signs permitted; commas are
         #    permitted only as delimiters for lists of values) INFO fields are encoded as a semicolon-separated series of short
         #    keys with optional values in the format: <key>=<data>[,data].
-        for key in ['dbsnp','measureset_type','measureset_id','rcv','allele_id',
-        'symbol', 'hgvs_c','hgvs_p','molecular_consequence','clinical_significance','sapientia_clinsig',
-        'pathogenic', 'benign', 'conflicted', 'review_status', 'gold_stars','all_submitters',
-        'all_traits','all_pmids', 'inheritance_modes', 'age_of_onset','prevalence', 'disease_mechanism', 
-        'origin', 'xrefs', 'type']:
+
+        for key in ['dbsnp', 'measureset_type', 'measureset_id', 'clnacc', 'allele_id', 'symbol', 'clnhgvs', 'hgvs_p', 'molecular_consequence', 'original_clnsig', 'clnsig', 'pathogenic', 'benign', 'conflicted', 'clnrevstat', 'gold_stars', 'all_submitters', 'clndbn', 'all_pmids', 'inheritance_modes', 'age_of_onset', 'prevalence', 'disease_mechanism', 'clnorigin', 'xrefs', 'type']:
             if pd.isnull(table_row[key]):
                 continue
             value = str(table_row[key])
