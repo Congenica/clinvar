@@ -148,7 +148,7 @@ def table_to_vcf(input_table_path,genome):
         vcf_row = []
         vcf_row.append(table_row["chrom"])
         vcf_row.append(table_row["pos"])
-        vcf_row.append(table_row["dbsnp"])  # ID
+        vcf_row.append(table_row["clnhgvs"])  # ID
         vcf_row.append(table_row["ref"])
         vcf_row.append(table_row["alt"])
         vcf_row.append('.')  # QUAL
@@ -161,7 +161,12 @@ def table_to_vcf(input_table_path,genome):
         #    permitted only as delimiters for lists of values) INFO fields are encoded as a semicolon-separated series of short
         #    keys with optional values in the format: <key>=<data>[,data].
 
-        for key in ['dbsnp', 'measureset_type', 'measureset_id', 'clnacc', 'allele_id', 'symbol', 'clnhgvs', 'hgvs_p', 'molecular_consequence', 'original_clnsig', 'clnsig', 'pathogenic', 'benign', 'conflicted', 'clnrevstat', 'gold_stars', 'all_submitters', 'clndbn', 'all_pmids', 'inheritance_modes', 'age_of_onset', 'prevalence', 'disease_mechanism', 'clnorigin', 'xrefs', 'type']:
+        for key in ['dbsnp', 'measureset_type', 'measureset_id', 'clnacc', 'allele_id', 
+                    'symbol', 'clnhgvs', 'hgvs_p', 'molecular_consequence', 'original_clnsig',
+                    'clnsig', 'pathogenic', 'benign', 'conflicted', 'clnrevstat', 'gold_stars',
+                    'all_submitters', 'clndbn', 'all_pmids', 'inheritance_modes', 'age_of_onset', 
+                    'prevalence', 'disease_mechanism', 'clnorigin', 'xrefs', 'type']:
+
             if pd.isnull(table_row[key]):
                 continue
             value = str(table_row[key])
