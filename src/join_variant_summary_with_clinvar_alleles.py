@@ -33,8 +33,8 @@ def join_variant_summary_with_clinvar_alleles(
     variant_summary = variant_summary[
         ['allele_id', 'clinicalsignificance', 'reviewstatus','lastevaluated']]
     variant_summary = variant_summary.rename(
-        columns={'clinicalsignificance': 'clinical_significance',
-                 'reviewstatus': 'review_status',
+        columns={'clinicalsignificance': 'original_clnsig',
+                 'reviewstatus': 'clnrevstat',
                  'lastevaluated':'last_evaluated'})
 
     # remove the duplicated records in variant summary due to alternative loci such as PAR but would be problematic for rare cases like translocation
@@ -43,7 +43,7 @@ def join_variant_summary_with_clinvar_alleles(
 
     # remove clinical_significance and review_status from clinvar_alleles:
     clinvar_alleles = clinvar_alleles.drop(
-        ['clinical_significance', 'review_status','last_evaluated'], axis=1)
+        ['original_clnsig', 'clnrevstat', 'last_evaluated'], axis=1)
 
     # pandas is sensitive to some rows having allele_id joined on ;, causing
     # an object dtype, with some entries being ints and others strs
@@ -69,11 +69,11 @@ def join_variant_summary_with_clinvar_alleles(
         'practice guideline': 4,
         '-':'-'
     }
-    df['gold_stars'] = df.review_status.map(gold_star_map)
+    df['gold_stars'] = df.clnrevstat.map(gold_star_map)
 
     # The use of expressions on clinical significance on ClinVar aggregate records (RCV) https://www.ncbi.nlm.nih.gov/clinvar/docs/clinsig/#conflicts
     # conflicted = 1 if using "conflicting"
-    df['conflicted'] = df['clinical_significance'].str.contains(
+    df['conflicted'] = df['original_clnsig'].str.contains(
         "onflicting", case=False).astype(int)
 
     # reorder columns just in case

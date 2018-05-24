@@ -6,7 +6,7 @@ import re
 import pandas as pd
 import sys
 
-from parse_clinvar_xml import HEADER
+from join_variant_summary_with_clinvar_alleles import FINAL_HEADER
 
 
 def gzopen(path, mode='r', verbose=True):
@@ -37,7 +37,7 @@ def table_to_vcf(input_table_path, input_reference_genome):
     descriptions = {
         'gold_stars': "Number of gold stars as shown on clinvar web pages to summarize review status. Lookup table described at http://www.ncbi.nlm.nih.gov/clinvar/docs/details/ was used to map the REVIEW_STATUS value to this number.",
     }
-    for key in HEADER:
+    for key in FINAL_HEADER:
         print("""##INFO=<ID={},Number=1,Type=String,Description="{}">"""
               .format(key.upper(), descriptions.get(key, key.upper())))
     with open(input_reference_genome_fai) as in_fai:
@@ -52,7 +52,7 @@ def table_to_vcf(input_table_path, input_reference_genome):
         vcf_row = []
         vcf_row.append(table_row["chrom"])
         vcf_row.append(table_row["pos"])
-        vcf_row.append('.')  # ID
+        vcf_row.append(table_row["rs"])  # ID = rsID
         vcf_row.append(table_row["ref"])
         vcf_row.append(table_row["alt"])
         vcf_row.append('.')  # QUAL
@@ -65,7 +65,7 @@ def table_to_vcf(input_table_path, input_reference_genome):
         #    permitted only as delimiters for lists of values) INFO fields are encoded as a semicolon-separated series of short
         #    keys with optional values in the format: <key>=<data>[,data].
         loc_column = ['chrom', 'pos', 'ref', 'alt']
-        for key in HEADER:
+        for key in FINAL_HEADER:
             if key not in loc_column:
                 if pd.isnull(table_row[key]):
                     continue
