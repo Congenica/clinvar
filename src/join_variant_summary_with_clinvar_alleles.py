@@ -4,7 +4,7 @@ import pandas as pd
 
 from parse_clinvar_xml import HEADER
 
-FINAL_HEADER = HEADER + ['gold_stars', 'conflicted']
+FINAL_HEADER = HEADER + ['type', 'gold_stars', 'conflicted']
 
 
 def join_variant_summary_with_clinvar_alleles(
@@ -31,7 +31,7 @@ def join_variant_summary_with_clinvar_alleles(
     variant_summary = variant_summary[
         variant_summary['assembly'] == genome_build_id]
     variant_summary = variant_summary[
-        ['allele_id', 'clinicalsignificance', 'reviewstatus','lastevaluated']]
+        ['allele_id', 'clinicalsignificance', 'reviewstatus', 'lastevaluated', 'type']]
     variant_summary = variant_summary.rename(
         columns={'clinicalsignificance': 'original_clnsig',
                  'reviewstatus': 'clnrevstat',
