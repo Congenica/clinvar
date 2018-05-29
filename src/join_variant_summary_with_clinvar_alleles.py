@@ -1,10 +1,31 @@
 #!/usr/bin/env python
+from collections import OrderedDict
 import sys
 import pandas as pd
 
 from parse_clinvar_xml import HEADER
 
-FINAL_HEADER = HEADER + ['type', 'gold_stars', 'conflicted']
+FINAL_HEADER = HEADER + ['clnsig', 'type', 'gold_stars', 'conflicted']
+
+
+def convert_terms_to_clnsig(terms):
+    clnsig_list = [term.lower() for term in terms.split(',')]
+    classifications = OrderedDict([
+        ('Pathogenic', ('pathogenic/likely pathogenic', 'pathogenic')),
+        ('Likely pathogenic', ('likely pathogenic',)),
+        ('Uncertain significance', ('uncertain significance',)),
+        ('Likely benign', ('benign/likely benign', 'likely benign')),
+        ('Benign', ('benign',)),
+        ('', ('association not found', 'affects', 'drug response', 'confers sensitivity',
+              'risk factor', 'other', 'association', 'protective', 'not provided',
+              'conflicting data from submitters', 'conflicting interpretations of '
+              'pathogenicity', 'no interpretation for the single variant'))
+    ])
+    for clnsig, original in classifications.items():
+        if not set(clnsig_list).isdisjoint(original):
+            return clnsig
+
+    raise ValueError('Unrecognised clinical significance term in {}'.format(clnsig_list))
 
 
 def join_variant_summary_with_clinvar_alleles(
@@ -56,6 +77,9 @@ def join_variant_summary_with_clinvar_alleles(
     df = pd.merge(clinvar_alleles, variant_summary,
                   on='allele_id', how='inner')
     print "merged raw", df.shape
+
+    # map clinical_significance to clnsig
+    df['clnsig'] = df.original_clnsig.map(convert_terms_to_clnsig)
 
     # map review_status to gold starts:
     gold_star_map = {
