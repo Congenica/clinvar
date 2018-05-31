@@ -37,9 +37,17 @@ def table_to_vcf(input_table_path, input_reference_genome):
     descriptions = {
         'gold_stars': "Number of gold stars as shown on clinvar web pages to summarize review status. Lookup table described at http://www.ncbi.nlm.nih.gov/clinvar/docs/details/ was used to map the REVIEW_STATUS value to this number.",
     }
+    not_required_in_header_or_info = ['chrom', 'pos', 'ref', 'alt', 'start', 'stop', 'strand',
+                                      'clinical_significance_ordered', 'review_status_ordered',
+                                      'dates_ordered', 'last_evaluated', 'submitters_ordered', 'likely_pathogenic',
+                                      'uncertain_significance', 'likely_benign', 'scv', 'type', 'age_of_onset',
+                                      'prevalence', 'disease_mechanism']
+    single_value_fields = ['symbol', 'pathogenic', 'benign', 'clnsig', 'gold_stars', 'conflicted']
     for key in FINAL_HEADER:
-        print("""##INFO=<ID={},Number=1,Type=String,Description="{}">"""
-              .format(key.upper(), descriptions.get(key, key.upper())))
+        if key not in not_required_in_header_or_info:
+            number = '1' if key in single_value_fields else '.'
+            print("""##INFO=<ID={},Number={},Type=String,Description="{}">""".format(
+                key.upper(), number, descriptions.get(key, key.upper())))
     with open(input_reference_genome_fai) as in_fai:
         for line in in_fai:
             chrom, length, _ = line.split("\t", 2)
@@ -64,14 +72,13 @@ def table_to_vcf(input_table_path, input_reference_genome):
         #    INFO - additional information: (String, no white-space, semi-colons, or equals-signs permitted; commas are
         #    permitted only as delimiters for lists of values) INFO fields are encoded as a semicolon-separated series of short
         #    keys with optional values in the format: <key>=<data>[,data].
-        loc_column = ['chrom', 'pos', 'ref', 'alt']
         for key in FINAL_HEADER:
-            if key not in loc_column:
+            if key not in not_required_in_header_or_info:
                 if pd.isnull(table_row[key]):
                     continue
                 value = str(table_row[key])
                 value = re.sub('\s*[,]\s*', '..', value)  # replace , with ..
-                value = re.sub('\s*[;]\s*', '|', value)  # replace ; with |
+                value = re.sub('\s*[;]\s*', ',', value)  # replace ; with |
                 value = value.replace("=", " eq ").replace(" ", "_")
                 
                 info_field[key.upper()] = value
