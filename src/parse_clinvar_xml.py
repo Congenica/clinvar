@@ -33,6 +33,17 @@ def remove_newlines_and_tabs(s):
     return re.sub("[\t\n\r]", " ", s)
 
 
+def get_genomic_location(measure_instance, required_fields, genome_build):
+    """Loops through all SequenceLocation XML tags associated with this Measure instance (ClinVar record) and returns
+    the first tag it finds that has the four required VCF fields"""
+
+    for sequence_location in measure_instance.findall(".//SequenceLocation"):
+        if sequence_location.attrib.get('Assembly') == genome_build:
+            if all(vcf_field in sequence_location.attrib for vcf_field in required_fields):
+                return sequence_location
+    return None
+
+
 def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome_build='GRCh37'):
     """Parse clinvar XML
     Args:
@@ -234,26 +245,27 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
 
             # find the allele ID (//Measure/@ID)
             current_row['allele_id'] = measure[i].attrib.get('ID')
-            # find the GRCh37 or GRCh38 VCF representation
-            genomic_location = None
 
-            for sequence_location in measure[i].findall(".//SequenceLocation"):
-                if sequence_location.attrib.get('Assembly') == genome_build:
-                    if all(sequence_location.attrib.get(key) is not None for key in
-                           ('Chr', 'start', 'referenceAllele', 'alternateAllele')):
-                        genomic_location = sequence_location
-                        break
-            # break after finding the first non-empty GRCh37 or GRCh38 location
+            # find the GRCh37 or GRCh38 VCF representation, first trying standard field names then left-align specific
+            vcf_field_groups = (
+                ('Chr', 'start', 'referenceAllele', 'alternateAllele'),
+                ('Chr', 'positionVCF', 'referenceAlleleVCF', 'alternateAlleleVCF')
+            )
 
-            if genomic_location is None:
+            for vcf_fields in vcf_field_groups:
+                genomic_location = get_genomic_location(measure[i], vcf_fields, genome_build)
+                if genomic_location is not None:
+                    pos_key, ref_key, alt_key = vcf_fields[1:]
+                    break
+            else:
                 skipped_counter['missing SequenceLocation'] += 1
                 elem.clear()
                 continue  # don't bother with variants that don't have a VCF location
 
             current_row['chrom'] = genomic_location.attrib['Chr']
-            current_row['pos'] = genomic_location.attrib['start']
-            current_row['ref'] = genomic_location.attrib['referenceAllele']
-            current_row['alt'] = genomic_location.attrib['alternateAllele']
+            current_row['pos'] = genomic_location.attrib[pos_key]
+            current_row['ref'] = genomic_location.attrib[ref_key]
+            current_row['alt'] = genomic_location.attrib[alt_key]
             current_row['start'] = genomic_location.attrib['start']
             current_row['stop'] = genomic_location.attrib['stop']
             current_row['strand'] = ''
