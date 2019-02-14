@@ -28,6 +28,25 @@ def convert_terms_to_clnsig(terms):
     raise ValueError('Unrecognised clinical significance term in {}'.format(clnsig_list))
 
 
+def determine_most_pathogenic_submission(row):
+    if row['pathogenic'] > 0:
+        return 'Pathogenic'
+    elif row['likely_pathogenic'] > 0:
+        return 'Likely pathogenic'
+    elif row['uncertain_significance'] > 0:
+        return 'Uncertain significance'
+    elif row['likely_benign'] > 0:
+        return 'Likely benign'
+    elif row['benign'] > 0:
+        return 'Benign'
+    else:
+        # may need to revisit this code to determine what to with these instances, really they shouldn't be classified
+        # as conflicted but the earlier join can be ambiguous due to a variant in variant_summary.txt.gz appearing in
+        # both the multi and single files with different numbers of submissions. For now, retain the current
+        # functionality of leaving the field blank for the conflicted variant
+        return ''
+
+
 def join_variant_summary_with_clinvar_alleles(
         variant_summary_table, clinvar_alleles_table,
         genome_build_id="GRCh37"):
@@ -99,6 +118,9 @@ def join_variant_summary_with_clinvar_alleles(
     # conflicted = 1 if using "conflicting"
     df['conflicted'] = df['original_clnsig'].str.contains(
         "onflicting", case=False).astype(int)
+
+    conflicted_variants = df['conflicted'] == 1
+    df.loc[conflicted_variants, 'clnsig'] = df[conflicted_variants].apply(determine_most_pathogenic_submission, axis=1)
 
     # reorder columns just in case
     df = df.ix[:, FINAL_HEADER]

@@ -39,10 +39,10 @@ def table_to_vcf(input_table_path, input_reference_genome):
     }
     not_required_in_header_or_info = ['chrom', 'pos', 'ref', 'alt', 'start', 'stop', 'strand',
                                       'clinical_significance_ordered', 'review_status_ordered',
-                                      'dates_ordered', 'last_evaluated', 'submitters_ordered', 'likely_pathogenic',
-                                      'uncertain_significance', 'likely_benign', 'scv', 'type', 'age_of_onset',
-                                      'prevalence', 'disease_mechanism']
-    single_value_fields = ['symbol', 'pathogenic', 'benign', 'clnsig', 'gold_stars', 'conflicted']
+                                      'dates_ordered', 'last_evaluated', 'submitters_ordered', 'scv', 'type',
+                                      'age_of_onset', 'prevalence', 'disease_mechanism']
+    single_value_fields = ['symbol', 'pathogenic', 'likely_pathogenic', 'uncertain_significance', 'likely_benign',
+                           'benign', 'clnsig', 'gold_stars', 'conflicted']
     for key in FINAL_HEADER:
         if key not in not_required_in_header_or_info:
             number = '1' if key in single_value_fields else '.'
