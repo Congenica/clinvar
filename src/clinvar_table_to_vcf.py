@@ -48,6 +48,13 @@ def table_to_vcf(input_table_path, input_reference_genome):
             number = '1' if key in single_value_fields else '.'
             print("""##INFO=<ID={},Number={},Type=String,Description="{}">""".format(
                 key.upper(), number, descriptions.get(key, key.upper())))
+
+    print('##INFO=<ID=TOTAL_VARIANTS,Number=1,Type=String,Description="{}"'.format(t.shape[0]))
+    for pathogenicity in ('Pathogenic', 'Likely pathogenic', 'Uncertain significance', 'Likely benign', 'Benign'):
+        pathogenicity_count = (t['clnsig'] == pathogenicity).sum()
+        print('##INFO=<ID={}_VARIANTS,Number=1,Type=String,Description="{}"'.format(
+            pathogenicity.upper().replace(' ', '_'), pathogenicity_count))
+
     with open(input_reference_genome_fai) as in_fai:
         for line in in_fai:
             chrom, length, _ = line.split("\t", 2)
