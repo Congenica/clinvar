@@ -212,7 +212,7 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
         current_row['rs'] = 'BLANK'
         for xref_node in measureset.findall('.//Measure/XRef'):
             if xref_node.attrib.get('Type') == 'rs':
-                current_row['rs'] = xref_node.attrib.get('ID')
+                current_row['rs'] = 'rs' + xref_node.attrib.get('ID')
 
         current_row['clnorigin'] = set()
         for origin in elem.findall('.//ReferenceClinVarAssertion/ObservedIn/Sample/Origin'):
