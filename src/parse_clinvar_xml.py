@@ -24,6 +24,29 @@ HEADER = ['chrom', 'pos', 'ref', 'alt', 'start', 'stop', 'strand', 'measureset_t
           'all_pmids', 'inheritance_modes', 'age_of_onset', 'prevalence',
           'disease_mechanism', 'clnorigin', 'xrefs', 'dates_ordered', 'rs']
 
+pathogenicity_mapping = {}
+pathogenicity_mapping.update(dict.fromkeys(
+    ['benign', 'no known pathogenicity', 'non-pathogenic', 'poly'],
+    'benign'
+))
+pathogenicity_mapping.update(dict.fromkeys(
+    ['vsb', 'likely benign', 'probable-non-pathogenic', 'probably not pathogenic', 'suspected benign'],
+    'likely benign'
+))
+pathogenicity_mapping.update(dict.fromkeys(
+    ['uncertain', 'uncertain significance', 'unknown', 'unknown significance', 'variant of unknown significance'],
+    'uncertain significance'
+))
+pathogenicity_mapping.update(dict.fromkeys(
+    ['likely pathogenic - adrenal bilateral pheochromocy', 'likely pathogenic - adrenal pheochromocytoma',
+     'likely pathogenic', 'probable-pathogenic', 'probably pathogenic', 'suspected pathogenic'],
+    'likely pathogenic'
+))
+pathogenicity_mapping.update(dict.fromkeys(
+    ['moderate', 'pathogenic', 'pathogenic variant for bardet-biedl syndrome', 'mut', 'pathologic'],
+    'pathogenic'
+))
+
 
 def replace_semicolons(s, replace_with=":"):
     return s.replace(";", replace_with)
@@ -162,7 +185,9 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
         ])
 
         list_significance= [
-            x.text.lower() for x in elem.findall('.//ClinVarAssertion/ClinicalSignificance/Description') if x is not None
+            pathogenicity_mapping[x.text.lower()] for x in
+            elem.findall('.//ClinVarAssertion/ClinicalSignificance/Description') if x is not None
+            and x.text.lower() in pathogenicity_mapping
         ]
 
         current_row['pathogenic'] = str(list_significance.count("pathogenic"))
