@@ -35,12 +35,36 @@ def table_to_vcf(input_table_path, input_reference_genome):
     print("""##fileformat=VCFv4.1\n##source=clinvar""")
 
     descriptions = {
-        'gold_stars': "Number of gold stars as shown on clinvar web pages to summarize review status. Lookup table described at http://www.ncbi.nlm.nih.gov/clinvar/docs/details/ was used to map the REVIEW_STATUS value to this number.",
+        'gold_stars': "Number of Gold Stars (numeric representation of review status)",
+        'clnsig': "Most Severe ClinVar Pathogenicity",
+        'original_clnsig': "Clinical Significance",
+        'pathogenic': "Number of 'Pathogenic' Submissions",
+        'likely_pathogenic': "Number of 'Likely pathogenic' Submissions",
+        'uncertain_significance': "Number of 'Uncertain significance' Submissions",
+        'likely_benign': "Number of 'Likely benign' Submissions",
+        'benign': "Number of 'Benign' Submissions",
+        'conflicted': "Conflicting Pathogenicities (0 = False; 1 = True)",
+        'clnhgvs': "HGVSc",
+        'clnrevstat': "Review Status",
+        'clndbn': "Phenotypes",
+        'clnorigin': "Allele Origin",
+        'rs': "rsID",
+        'all_pmids': "Pubmed IDs Documenting Evidence of Phenotypes",
+        'clnacc': "RCV Accession Number",
+        'measureset_type': "Measureset Type",
+        'measureset_id': "Measureset ID",
+        'allele_id': "Allele ID",
+        'symbol': "Gene Symbol",
+        'molecular_consequence': "Molecular Consequence",
+        'hgvs_p': "HGVSp",
+        'all_submitters': "Submitters of Variant Phenotype",
+        'inheritance_modes': "Modes of Inheritance",
+        'xrefs': "Cross-References to other Data Sources"
     }
     not_required_in_header_or_info = ['chrom', 'pos', 'ref', 'alt', 'start', 'stop', 'strand',
                                       'clinical_significance_ordered', 'review_status_ordered',
                                       'dates_ordered', 'last_evaluated', 'submitters_ordered', 'scv', 'type',
-                                      'age_of_onset', 'prevalence', 'disease_mechanism']
+                                      'inheritance_modes', 'age_of_onset', 'prevalence', 'disease_mechanism']
     single_value_fields = ['symbol', 'pathogenic', 'likely_pathogenic', 'uncertain_significance', 'likely_benign',
                            'benign', 'clnsig', 'gold_stars', 'conflicted']
     for key in FINAL_HEADER:
