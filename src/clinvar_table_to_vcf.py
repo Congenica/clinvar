@@ -1,4 +1,5 @@
 import argparse
+import calendar
 import collections
 import gzip
 import os
@@ -16,7 +17,7 @@ def gzopen(path, mode='r', verbose=True):
         return open(path, mode)
 
 
-def table_to_vcf(input_table_path, input_reference_genome):
+def table_to_vcf(input_table_path, input_reference_genome, version):
     # validate args
     input_reference_genome_fai = input_reference_genome + ".fai"
     if not os.path.isfile(input_table_path):
@@ -73,11 +74,20 @@ def table_to_vcf(input_table_path, input_reference_genome):
             print("""##INFO=<ID={},Number={},Type=String,Description="{}">""".format(
                 key.upper(), number, descriptions.get(key, key.upper())))
 
-    print('##INFO=<ID=TOTAL_VARIANTS,Number=1,Type=String,Description="{}"'.format(t.shape[0]))
-    for pathogenicity in ('Pathogenic', 'Likely pathogenic', 'Uncertain significance', 'Likely benign', 'Benign'):
-        pathogenicity_count = (t['clnsig'] == pathogenicity).sum()
-        print('##INFO=<ID={}_VARIANTS,Number=1,Type=String,Description="{}"'.format(
-            pathogenicity.upper().replace(' ', '_'), pathogenicity_count))
+    version_date = re.search(r'(?P<year>\d{4})-(?P<month>\d{2})', version)
+    try:
+        month_string = calendar.month_name[int(version_date.group('month'))]
+    except IndexError:
+        raise ValueError('Cannot convert version month value "{}" to a known month (must be between 01-12)'.format(
+            version_date.group('month')
+        ))
+
+    print('##CONGENICA_VCF_VALIDATION=<ID=CLINVAR_MASTER_NUM_TOTAL_VARIANTS,VALUE={},DESCRIPTION="Number of variants '
+          'in VCF"'.format(t.shape[0]))
+    print('##CURATED_VARIANT_LIST_INFO=<ID=VERSION,VALUE="{}",DESCRIPTION="Version of source data">'.format(version))
+    print('##CURATED_VARIANT_LIST_INFO=<ID=DESCRIPTION,VALUE="ClinVar variants (SNVs and indels) in the {}-{} '
+          'version of the ClinVar dataset",DESCRIPTION="Description for the Curated Variant List">'.format(
+              version_date.group('year'), month_string))
 
     with open(input_reference_genome_fai) as in_fai:
         for line in in_fai:
@@ -124,6 +134,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('input_table_path', help="Tab-delimited input table")
     parser.add_argument('input_reference_genome', help="Reference FASTA used. The associated .fai file, e.g. b38.fa.fai, is necessary for the VCF header generation")
+    parser.add_argument('clinvar_version', help="Version of ClinVar e.g. 2019-02")
     args = parser.parse_args()
 
-    table_to_vcf(args.input_table_path, args.input_reference_genome)
+    table_to_vcf(args.input_table_path, args.input_reference_genome, args.clinvar_version)
