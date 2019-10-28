@@ -313,6 +313,8 @@ def parse_clinvar_tree(handle, dest=sys.stdout, multi=None, verbose=True, genome
                 # find hgvs_c
                 if (attribute_type == 'HGVS, coding, RefSeq' and "c." in attribute_value):
                     current_row['clnhgvs'] = attribute_value
+                else:
+                    current_row['clnhgvs'] = var_name
 
                 # find hgvs_p
                 if (attribute_type == 'HGVS, protein, RefSeq' and "p." in attribute_value):
