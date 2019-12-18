@@ -82,7 +82,7 @@ def table_to_vcf(input_table_path, input_reference_genome, version):
             version_date.group('month')
         ))
 
-    print('##CONGENICA_VCF_VALIDATION=<ID=CLINVAR_MASTER_NUM_TOTAL_VARIANTS,VALUE={},DESCRIPTION="Number of variants '
+    print('##CONGENICA_VCF_VALIDATION=<ID=CLINVAR_MASTER_NUM_TOTAL_VARIANTS,VALUE={},DESCRIPTION="Total number of variants '
           'in VCF"'.format(t.shape[0]))
     print('##CURATED_VARIANT_LIST_INFO=<ID=VERSION,VALUE="{}",DESCRIPTION="Version of source data">'.format(version))
     print('##CURATED_VARIANT_LIST_INFO=<ID=DESCRIPTION,VALUE="ClinVar variants (SNVs and indels) in the {}-{} '
