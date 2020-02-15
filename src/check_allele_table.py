@@ -36,7 +36,7 @@ for i, line in enumerate(f):
         assert all(b in 'ACGTN' for b in record['alt']), 'Unexpected "alt" column value: ' + record['alt']  # there's one clinvar record with ALT = "NTGT". Not sure how to handle it.
         assert record['measureset_type'] in [
             "Variant", "Haplotype", "CompoundHeterozygote", "Phase unknown", "Distinct chromosomes",
-            "CompoundHeterozygote;Haplotype", "Variant;gene-variant", "Haplotype;Phase unknown"
+            "CompoundHeterozygote;Haplotype", "Variant;gene-variant", "Haplotype;Phase unknown", "Haplotype;Variant"
         ], 'Unexpected "measureset_type" column value: ' + record['measureset_type']
 
         assert len(map(int, record['measureset_id'].split(';'))) > 0, 'Unexpected "measureset_id" column value: ' + record['measureset_id']
